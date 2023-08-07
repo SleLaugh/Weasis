@@ -48,3 +48,5 @@ weasis_*.snap
 #comlile
 build-dist
 
+# Ignore specific folder
+weasis-windows-x86-64-jdk20-4.1.2-SNAPSHOT/

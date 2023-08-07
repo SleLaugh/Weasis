@@ -112,6 +112,10 @@ if [ ! -d "${INPUT_PATH}" ] ; then
   die "The input path ${INPUT_PATH} doesn't exist, provide a valid value for --input"
 fi
 
+if [ ! -d "${JDK_PATH_UNIX}" ] ; then
+  JDK_PATH_UNIX=$(cygpath -u "${JAVA_HOME}")
+fi
+
 cp "$INPUT_PATH/weasis/bundle/weasis-core-img-"* weasis-core-img.jar.xz
 xz --decompress weasis-core-img.jar.xz
 ARC_OS=$("$JDK_PATH_UNIX/bin/java" -cp "weasis-core-img.jar" org.weasis.core.util.NativeLibrary)
@@ -137,7 +141,8 @@ export JAVA_HOME=$JDK_PATH_UNIX
 
 WEASIS_VERSION=$(grep -i "weasis.version=" "$INPUT_PATH_UNIX/weasis/conf/config.properties" | sed 's/^.*=//')
 
-echo System        = "${ARC_OS}"
+echo Machine         = "${machine}"
+echo System          = "${ARC_OS}"
 echo JDK path        = "${JDK_PATH_UNIX}"
 echo Weasis version  = "${WEASIS_VERSION}"
 echo Input path      = "${INPUT_PATH}"
@@ -159,7 +164,7 @@ else
 fi
 
 # Then, get the installed version
-INSTALLED_VERSION=$($JAVACMD -version 2>&1 | awk '/version [0-9]*/ {print $3;}')
+INSTALLED_VERSION=$(java -version 2>&1 | awk '/version [0-9]*/ {print $3;}')
 echo "Found java version $INSTALLED_VERSION"
 echo "Java command path: $JAVACMD"
 
@@ -242,7 +247,7 @@ declare -a commonOptions=("--java-options" "-Dgosh.port=17179" \
 "--java-options" "--add-opens=java.desktop/javax.imageio.stream=ALL-UNNAMED" "--java-options" "--add-opens=java.desktop/javax.imageio=ALL-UNNAMED" \
 "--java-options" "--add-opens=java.desktop/com.sun.awt=ALL-UNNAMED" )
 
-$JPKGCMD --type app-image --input "$INPUT_DIR" --dest "$OUTPUT_PATH" --name "$NAME" \
+"$JPKGCMD" --type app-image --input "$INPUT_DIR" --dest "$OUTPUT_PATH" --name "$NAME" \
 --main-jar weasis-launcher.jar --main-class org.weasis.launcher.AppLauncher --add-modules "$JDK_MODULES" \
 --add-launcher "${DICOMIZER_CONFIG}" --resource-dir "$RES"  --app-version "$WEASIS_CLEAN_VERSION" \
 "${tmpArgs[@]}" --verbose "${signArgs[@]}" "${customOptions[@]}" "${commonOptions[@]}"
@@ -252,7 +257,7 @@ if [ "$PACKAGE" = "YES" ] ; then
   COPYRIGHT="© 2009-2023 Weasis Team"
   if [ "$machine" = "windows" ] ; then
     [ "$arc" = "x86" ]  && UPGRADE_UID="3aedc24e-48a8-4623-ab39-0c3c01c7383b" || UPGRADE_UID="3aedc24e-48a8-4623-ab39-0c3c01c7383a"
-    $JPKGCMD --type "msi" --app-image "$IMAGE_PATH" --dest "$OUTPUT_PATH" --name "$NAME" --resource-dir "$RES/msi/${arc}" \
+    "$JPKGCMD" --type "msi" --app-image "$IMAGE_PATH" --dest "$OUTPUT_PATH" --name "$NAME" --resource-dir "$RES/msi/${arc}" \
     --license-file "$INPUT_PATH\Licence.txt" --description "Weasis DICOM viewer" --win-upgrade-uuid "$UPGRADE_UID"  \
     --win-menu --win-menu-group "$NAME" --copyright "$COPYRIGHT" --app-version "$WEASIS_CLEAN_VERSION" \
     --vendor "$VENDOR" --file-associations "${curPath}\file-associations.properties" "${tmpArgs[@]}" --verbose
@@ -260,7 +265,7 @@ if [ "$PACKAGE" = "YES" ] ; then
   elif [ "$machine" = "linux" ] ; then
     declare -a installerTypes=("deb" "rpm")
     for installerType in "${installerTypes[@]}"; do
-      $JPKGCMD --type "$installerType" --app-image "$IMAGE_PATH" --dest "$OUTPUT_PATH"  --name "$NAME" --resource-dir "$RES" \
+      "$JPKGCMD" --type "$installerType" --app-image "$IMAGE_PATH" --dest "$OUTPUT_PATH"  --name "$NAME" --resource-dir "$RES" \
       --license-file "$INPUT_PATH/Licence.txt" --description "Weasis DICOM viewer" --vendor "$VENDOR" \
       --copyright "$COPYRIGHT" --app-version "$WEASIS_CLEAN_VERSION" --file-associations "${curPath}/file-associations.properties" \
       --linux-app-release "$REVISON_INC" --linux-package-name "weasis" --linux-deb-maintainer "Nicolas Roduit" --linux-rpm-license-type "EPL-2.0" \
@@ -271,7 +276,7 @@ if [ "$PACKAGE" = "YES" ] ; then
       fi
     done
   elif [ "$machine" = "macosx" ] ; then
-    $JPKGCMD --type "pkg" --app-image "$IMAGE_PATH.app" --dest "$OUTPUT_PATH" --name "$NAME" --resource-dir "$RES" \
+    "$JPKGCMD" --type "pkg" --app-image "$IMAGE_PATH.app" --dest "$OUTPUT_PATH" --name "$NAME" --resource-dir "$RES" \
     --license-file "$INPUT_PATH/Licence.txt" --copyright "$COPYRIGHT" --app-version "$WEASIS_CLEAN_VERSION" \
     "${tmpArgs[@]}" --verbose "${signArgs[@]}"
   fi
