@@ -224,7 +224,12 @@ public class WeasisWin {
 
     rootPaneContainer.setGlassPane(AppProperties.glassPane);
 
-    frame.setTitle(AppProperties.WEASIS_NAME + " v" + AppProperties.WEASIS_VERSION); // NON-NLS
+    /**
+     * 程序标题不带版本号
+     * sle 2023年8月8日15:02:13
+     */
+//    frame.setTitle(AppProperties.WEASIS_NAME + " v" + AppProperties.WEASIS_VERSION); // NON-NLS
+    frame.setTitle(AppProperties.WEASIS_NAME); // NON-NLS
 
     LogoIcon logoIcon =
         AppProperties.WEASIS_NAME.endsWith("Dicomizer") // NON-NLS
