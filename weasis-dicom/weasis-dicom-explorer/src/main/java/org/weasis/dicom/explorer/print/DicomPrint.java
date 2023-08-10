@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Executors;
+
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Sequence;
 import org.dcm4che3.data.Tag;
@@ -93,7 +94,7 @@ public class DicomPrint {
 
     if (g2d != null) {
       Color borderColor =
-          "WHITE".equals(printOptions.getBorderDensity(true)) ? Color.WHITE : Color.BLACK;
+              "WHITE".equals(printOptions.getBorderDensity(true)) ? Color.WHITE : Color.BLACK;
       Color background = "WHITE".equals(printOptions.getEmptyDensity(true)) ? Color.WHITE : Color.BLACK;
       g2d.setBackground(background);
       if (!Color.BLACK.equals(background)) {
@@ -121,9 +122,9 @@ public class DicomPrint {
         double wy = lastwy[key.gridx];
 
         double x =
-            5 + (placeholderX * wx) + (MathUtil.isEqualToZero(wx) ? 0 : key.gridx * 5) + pad.x;
+                5 + (placeholderX * wx) + (MathUtil.isEqualToZero(wx) ? 0 : key.gridx * 5) + pad.x;
         double y =
-            5 + (placeholderY * wy) + (MathUtil.isEqualToZero(wy) ? 0 : key.gridy * 5) + pad.y;
+                5 + (placeholderY * wy) + (MathUtil.isEqualToZero(wy) ? 0 : key.gridy * 5) + pad.y;
         lastx = key.gridx;
         lastwx = key.weightx;
         for (int i = key.gridx; i < key.gridx + key.gridwidth; i++) {
@@ -195,7 +196,7 @@ public class DicomPrint {
   }
 
   private void formatImage(
-      ExportImage<? extends ImageElement> image, LayoutConstraints key, Point2D.Double pad) {
+          ExportImage<? extends ImageElement> image, LayoutConstraints key, Point2D.Double pad) {
     if (!printOptions.isShowingAnnotations() && image.getInfoLayer().getVisible()) {
       image.getInfoLayer().setVisible(false);
     }
@@ -216,8 +217,8 @@ public class DicomPrint {
         canvasHeight = originSize.getHeight() / originZoom;
       }
       double scaleCanvas =
-          Math.min(
-              placeholderX * key.weightx / canvasWidth, placeholderY * key.weighty / canvasHeight);
+              Math.min(
+                      placeholderX * key.weightx / canvasWidth, placeholderY * key.weighty / canvasHeight);
 
       // Set the print area in pixel
       double cw = canvasWidth * scaleCanvas;
@@ -233,9 +234,9 @@ public class DicomPrint {
       }
 
       image
-          .getDisplayOpManager()
-          .setParamValue(
-              AffineTransformOp.OP_NAME, AffineTransformOp.P_INTERPOLATION, interpolation);
+              .getDisplayOpManager()
+              .setParamValue(
+                      AffineTransformOp.OP_NAME, AffineTransformOp.P_INTERPOLATION, interpolation);
       double scaleFactor = Math.min(cw / canvasWidth, ch / canvasHeight);
       // Resize in best fit window
       image.zoom(scaleFactor);
@@ -254,7 +255,7 @@ public class DicomPrint {
   public static BufferedImage createRGBBufferedImage(int destWidth, int destHeight) {
     ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_sRGB);
     ColorModel cm =
-        new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+            new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
     WritableRaster r = cm.createCompatibleWritableRaster(destWidth, destHeight);
     return new BufferedImage(cm, r, false, null);
   }
@@ -262,7 +263,7 @@ public class DicomPrint {
   public static BufferedImage createGrayBufferedImage(int destWidth, int destHeight) {
     ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
     ColorModel cm =
-        new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+            new ComponentColorModel(cs, false, false, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
     WritableRaster r = cm.createCompatibleWritableRaster(destWidth, destHeight);
     return new BufferedImage(cm, r, false, null);
   }
@@ -272,43 +273,13 @@ public class DicomPrint {
     Attributes filmBoxAttrs = new Attributes();
     Attributes imageBoxAttrs = new Attributes();
     Attributes dicomImage = new Attributes();
-    final String printManagementSOPClass =
-        printOptions.isColorPrint()
-            ? UID.BasicColorPrintManagementMeta
-            : UID.BasicGrayscalePrintManagementMeta;
-    final String imageBoxSOPClass =
-        printOptions.isColorPrint() ? UID.BasicColorImageBox : UID.BasicGrayscaleImageBox;
 
     storeRasterInDicom(image, dicomImage, printOptions.isColorPrint());
 
     // writeDICOM(new File("/tmp/print.dcm"), dicomImage);
+    // 获取Weasis AE的配置信息，如果没有配置则默认为"WEASIS_AE"
+    String weasisAet = BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.aet", "WEASIS_AE"); // NON-NLS
 
-    String weasisAet =
-        BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.aet", "WEASIS_AE"); // NON-NLS
-
-    Device device = new Device(weasisAet);
-    ApplicationEntity ae = new ApplicationEntity(weasisAet);
-    Connection conn = new Connection();
-
-    ApplicationEntity remoteAE = new ApplicationEntity(dcmNode.getAeTitle());
-    Connection remoteConn = new Connection();
-
-    ae.addConnection(conn);
-    ae.setAssociationInitiator(true);
-    ae.setAETitle(weasisAet);
-
-    remoteConn.setPort(dcmNode.getPort());
-    remoteConn.setHostname(dcmNode.getHostname());
-    remoteConn.setSocketCloseDelay(90);
-
-    remoteAE.setAssociationAcceptor(true);
-    remoteAE.addConnection(remoteConn);
-
-    device.addConnection(conn);
-    device.addApplicationEntity(ae);
-    ae.addConnection(conn);
-    device.setExecutor(Executors.newSingleThreadExecutor());
-    device.setScheduledExecutor(Executors.newSingleThreadScheduledExecutor());
 
     filmSessionAttrs.setInt(Tag.NumberOfCopies, VR.IS, printOptions.getNumOfCopies());
     filmSessionAttrs.setString(Tag.PrintPriority, VR.CS, printOptions.getPriority(true));
@@ -325,74 +296,151 @@ public class DicomPrint {
     filmBoxAttrs.setString(Tag.ImageDisplayFormat, VR.ST, printOptions.getImageDisplayFormat());
     imageBoxAttrs.setInt(Tag.ImageBoxPosition, VR.US, 1);
 
+    //创建一个新的Sequence，用于保存DICOM图像
     Sequence seq =
-        imageBoxAttrs.ensureSequence(
-            printOptions.isColorPrint()
-                ? Tag.BasicColorImageSequence
-                : Tag.BasicGrayscaleImageSequence,
-            1);
+            imageBoxAttrs.ensureSequence(
+                    printOptions.isColorPrint()
+                            ? Tag.BasicColorImageSequence
+                            : Tag.BasicGrayscaleImageSequence,
+                    1);
+
+    // 将DICOM图像添加到Sequence中
     seq.add(dicomImage);
+
+    // 创建一个新的FilmSessionUID和FilmBoxUID
     final String filmSessionUID = UIDUtils.createUID();
     final String filmBoxUID = UIDUtils.createUID();
+
+    // 创建一个Attributes对象，用于保存FilmSession的参考信息
     Attributes filmSessionSequenceObject = new Attributes();
+
+    // 将ReferencedSOPClassUID设置为BasicFilmSession SOP Class UID
     filmSessionSequenceObject.setString(Tag.ReferencedSOPClassUID, VR.UI, UID.BasicFilmSession);
+    // 将ReferencedSOPInstanceUID设置为新创建的FilmSessionUID
     filmSessionSequenceObject.setString(Tag.ReferencedSOPInstanceUID, VR.UI, filmSessionUID);
+    // 创建一个新的Sequence，用于保存ReferencedFilmSessionSequence
     seq = filmBoxAttrs.ensureSequence(Tag.ReferencedFilmSessionSequence, 1);
+    // 将保存FilmSession的Attributes对象添加到Sequence中
     seq.add(filmSessionSequenceObject);
 
-    AAssociateRQ rq = new AAssociateRQ();
-    rq.addPresentationContext(
-        new PresentationContext(1, printManagementSOPClass, UID.ImplicitVRLittleEndian));
-    rq.setCallingAET(ae.getAETitle());
-    rq.setCalledAET(remoteAE.getAETitle());
-    Association as = ae.connect(remoteConn, rq);
+    // 根据打印选项设置打印管理SOP类的UID
+    // 如果是彩色打印，使用BasicColorPrintManagementMeta，否则使用BasicGrayscalePrintManagementMeta
+    final String printManagementSOPClass =
+            printOptions.isColorPrint()
+                    ? UID.BasicColorPrintManagementMeta
+                    : UID.BasicGrayscalePrintManagementMeta;
+    final String imageBoxSOPClass =
+            printOptions.isColorPrint() ? UID.BasicColorImageBox : UID.BasicGrayscaleImageBox;
+
+    Association as = ConnectAssociation(weasisAet,dcmNode.getAeTitle(),dcmNode.getHostname(),dcmNode.getPort(),printManagementSOPClass);
+
     try {
       // See http://dicom.nema.org/medical/dicom/current/output/chtml/part02/sect_E.4.2.html
       // Create a Basic Film Session
+      //创建一个 DICOM 打印会话，并使用给定的属性（filmSessionAttrs）作为参数
       dimseRSPHandler(
-          as.ncreate(
-              printManagementSOPClass,
-              UID.BasicFilmSession,
-              filmSessionUID,
-              filmSessionAttrs,
-              UID.ImplicitVRLittleEndian));
+              as.ncreate(
+                      printManagementSOPClass,
+                      UID.BasicFilmSession,
+                      filmSessionUID,
+                      filmSessionAttrs,
+                      UID.ImplicitVRLittleEndian));
       // Create a Basic Film Box. We need to get the Image Box UID from the response
+      // 创建基本打印对象（Basic Film Box）。我们需要从响应中获取图像框UID
       DimseRSP ncreateFilmBoxRSP =
-          as.ncreate(
-              printManagementSOPClass,
-              UID.BasicFilmBox,
-              filmBoxUID,
-              filmBoxAttrs,
-              UID.ImplicitVRLittleEndian);
+              as.ncreate(
+                      printManagementSOPClass,
+                      UID.BasicFilmBox,
+                      filmBoxUID,
+                      filmBoxAttrs,
+                      UID.ImplicitVRLittleEndian);
+      //创建Basic Film Box的响应消息。将创建Basic Film Box的响应消息传递给 dimseRSPHandler() 方法进行处理
       dimseRSPHandler(ncreateFilmBoxRSP);
+      // 将指针移动到 Basic Film Box 中的 Referenced Image Box Sequence。
+      // 因为 Basic Film Box 包含一个或多个 Referenced Image Box，我们需要将指针移动到这个序列中才能获取其中的数据
       ncreateFilmBoxRSP.next();
-      Attributes imageBoxSequence =
-          ncreateFilmBoxRSP.getDataset().getNestedDataset(Tag.ReferencedImageBoxSequence);
+      //取响应消息的数据集,该序列存储以便后续使用
+      Attributes imageBoxSequence = ncreateFilmBoxRSP.getDataset().getNestedDataset(Tag.ReferencedImageBoxSequence);
       // Send N-SET message with the Image Box
+      // 使用图像框发送N-SET消息
       dimseRSPHandler(
-          as.nset(
-              printManagementSOPClass,
-              imageBoxSOPClass,
-              imageBoxSequence.getString(Tag.ReferencedSOPInstanceUID),
-              imageBoxAttrs,
-              UID.ImplicitVRLittleEndian));
+              as.nset(
+                      printManagementSOPClass,
+                      imageBoxSOPClass,
+                      imageBoxSequence.getString(Tag.ReferencedSOPInstanceUID),
+                      imageBoxAttrs,
+                      UID.ImplicitVRLittleEndian));
       // Send N-ACTION message with the print action
+      // 发送N-ACTION消息进行打印操作
       dimseRSPHandler(
-          as.naction(
-              printManagementSOPClass,
-              UID.BasicFilmBox,
-              filmBoxUID,
-              1,
-              null,
-              UID.ImplicitVRLittleEndian));
+              as.naction(
+                      printManagementSOPClass,
+                      UID.BasicFilmBox,
+                      filmBoxUID,
+                      1,
+                      null,
+                      UID.ImplicitVRLittleEndian));
       // The print action ends here. This will only delete the Film Box and Film Session
+      // 打印完成后，删除Film Box和Film Session
       as.ndelete(printManagementSOPClass, UID.BasicFilmBox, filmBoxUID);
       as.ndelete(printManagementSOPClass, UID.BasicFilmSession, filmSessionUID);
     } finally {
+      // 确保释放资源
       if (as != null && as.isReadyForDataTransfer()) {
         as.waitForOutstandingRSP();
         as.release();
       }
+    }
+  }
+
+  public static Association ConnectAssociation(String localAE, String targetAE, String targetHost, int targetPort, String SOPClass) {
+    try {
+      // 创建DICOM设备
+      Device device = new Device(localAE);
+
+      //创建本地DICOM连接。
+      Connection lConn = new Connection();
+      //创建本地应用实体
+      ApplicationEntity lAE = new ApplicationEntity(localAE);
+      //添加连接到应用实体和设备。
+      lAE.addConnection(lConn);
+      //设置本地应用实体的信息，包括AETitle和是否是协会发起方。
+      lAE.setAssociationInitiator(true);
+      lAE.setAETitle(localAE);
+
+      //创建远程连接
+      Connection tConn = new Connection();
+      tConn.setPort(targetPort);
+      tConn.setHostname(targetHost);
+      tConn.setSocketCloseDelay(90);
+      //创建远程应用实体。
+      ApplicationEntity tAE = new ApplicationEntity(targetAE);
+      //设置远程应用实体的信息，包括是否是协会接受方。
+      tAE.setAssociationAcceptor(true);
+      //添加远程连接到远程应用实体。
+      tAE.addConnection(tConn);
+
+      //将本地应用实体和设备关联起来。
+      device.addConnection(lConn);
+      //添加连接到应用实体和设备。
+      device.addApplicationEntity(lAE);
+      lAE.addConnection(lConn);
+      //设置设备的执行器和计划执行器
+      device.setExecutor(Executors.newSingleThreadExecutor());
+      device.setScheduledExecutor(Executors.newSingleThreadScheduledExecutor());
+
+      // 创建一个A-ASSOCIATE请求
+      AAssociateRQ request = new AAssociateRQ();
+      // 将PresentationContext与A-ASSOCIATE请求相关联
+      request.addPresentationContext(new PresentationContext(1, SOPClass, UID.ImplicitVRLittleEndian));
+      // 设置调用方的AE Title和被调用方的AE Title
+      request.setCallingAET(lAE.getAETitle());
+      request.setCalledAET(tAE.getAETitle());
+      // 使用A-ASSOCIATE请求连接本地的AE和远程的AE
+      Association as = lAE.connect(tConn, request);
+      return as;
+    } catch (Exception e) {
+      throw new RuntimeException(e);
     }
   }
 
@@ -401,28 +449,28 @@ public class DicomPrint {
     Attributes command = response.getCommand();
     int status = command.getInt(Tag.Status, 0);
     if (status == Status.AttributeValueOutOfRange
-        || status == Status.AttributeListError
-        || status == 0xB600
-        || status == 0xB602
-        || status == 0xB604
-        || status == 0xB609
-        || status == 0xB60A) {
+            || status == Status.AttributeListError
+            || status == 0xB600
+            || status == 0xB602
+            || status == 0xB604
+            || status == 0xB609
+            || status == 0xB60A) {
       LOGGER.warn("DICOM Print warning status: {}", Integer.toHexString(status));
     } else if (status != Status.Success) {
       throw new IOException(
-          "Unable to print the image. DICOM response status: " + Integer.toHexString(status));
+              "Unable to print the image. DICOM response status: " + Integer.toHexString(status));
     }
   }
 
   public static void storeRasterInDicom(
-      BufferedImage image, Attributes dcmObj, Boolean printInColor) {
+          BufferedImage image, Attributes dcmObj, Boolean printInColor) {
     byte[] bytesOut = null;
     if (dcmObj != null && image != null) {
       dcmObj.setInt(Tag.Columns, VR.US, image.getWidth());
       dcmObj.setInt(Tag.Rows, VR.US, image.getHeight());
       dcmObj.setInt(Tag.PixelRepresentation, VR.US, 0);
       dcmObj.setString(
-          Tag.PhotometricInterpretation, VR.CS, printInColor ? "RGB" : "MONOCHROME2"); // NON-NLS
+              Tag.PhotometricInterpretation, VR.CS, printInColor ? "RGB" : "MONOCHROME2"); // NON-NLS
       dcmObj.setInt(Tag.SamplesPerPixel, VR.US, printInColor ? 3 : 1);
       dcmObj.setInt(Tag.BitsAllocated, VR.US, 8);
       dcmObj.setInt(Tag.BitsStored, VR.US, 8);
@@ -466,8 +514,8 @@ public class DicomPrint {
       return colorImage;
     }
     BufferedImage image =
-        new BufferedImage(
-            colorImage.getWidth(), colorImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+            new BufferedImage(
+                    colorImage.getWidth(), colorImage.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
     Graphics g = image.getGraphics();
     g.drawImage(colorImage, 0, 0, null);
     g.dispose();

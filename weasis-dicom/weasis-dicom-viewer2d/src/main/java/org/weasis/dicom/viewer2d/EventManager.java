@@ -16,6 +16,7 @@ import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.image.DataBuffer;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.KeyStroke;
 import javax.swing.SwingUtilities;
+
+import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.img.data.PrDicomObject;
 import org.dcm4che3.img.lut.PresetWindowLevel;
@@ -60,12 +63,7 @@ import org.weasis.core.api.gui.util.SliderChangeListener;
 import org.weasis.core.api.gui.util.SliderCineListener;
 import org.weasis.core.api.gui.util.SliderCineListener.TIME;
 import org.weasis.core.api.gui.util.ToggleButtonListener;
-import org.weasis.core.api.image.FilterOp;
-import org.weasis.core.api.image.GridBagLayoutModel;
-import org.weasis.core.api.image.ImageOpNode;
-import org.weasis.core.api.image.OpManager;
-import org.weasis.core.api.image.PseudoColorOp;
-import org.weasis.core.api.image.WindowOp;
+import org.weasis.core.api.image.*;
 import org.weasis.core.api.image.op.ByteLut;
 import org.weasis.core.api.image.op.ByteLutCollection;
 import org.weasis.core.api.image.util.KernelData;
@@ -101,19 +99,19 @@ import org.weasis.core.ui.model.utils.bean.PanPoint;
 import org.weasis.core.ui.util.ColorLayerUI;
 import org.weasis.core.ui.util.PrintDialog;
 import org.weasis.core.util.LangUtil;
-import org.weasis.dicom.codec.DicomImageElement;
-import org.weasis.dicom.codec.DicomSeries;
-import org.weasis.dicom.codec.PRSpecialElement;
-import org.weasis.dicom.codec.SortSeriesStack;
-import org.weasis.dicom.codec.TagD;
+import org.weasis.dicom.codec.*;
 import org.weasis.dicom.codec.geometry.ImageOrientation;
 import org.weasis.core.api.util.DicomResource;
 import org.weasis.dicom.viewer2d.mip.MipView;
 import org.weasis.dicom.viewer2d.mpr.MprContainer;
 import org.weasis.dicom.viewer2d.mpr.MprView;
+import org.weasis.opencv.data.PlanarImage;
 import org.weasis.opencv.op.ImageConversion;
+import org.weasis.opencv.op.ImageProcessor;
 import org.weasis.opencv.op.lut.DefaultWlPresentation;
 import org.weasis.opencv.op.lut.LutShape;
+import javax.json.Json;
+import javax.json.JsonObject;
 
 /**
  * The event processing center for this application. This class responses for loading data sets,
@@ -1571,6 +1569,127 @@ public class EventManager extends ImageViewerEventManager<DicomImageElement>
         }
       }
     }
+    return menu;
+  }
+
+  /**
+   * 右键菜单添加到打印序列 sle
+   * 2023年4月25日11:51:05
+   *
+   * @return 按钮
+   */
+  public JMenuItem getPrintMenu() {
+    JMenu menu = new JMenu(ActionW.PRINT.getTitle());
+    menu.setIcon(ActionW.PRINT.getIcon());
+
+    /// 当前选中帧的菜单
+    JMenuItem selected = new JMenuItem(Messages.getString("PrintToolBar.selected"));
+    selected.addActionListener(e -> PrintToolManager.PrintAddSelected(getSelectedViewPane().getImage()));
+    menu.add(selected);
+    // 循环显示所有关键图像组
+    List<Attributes> allKOList = new ArrayList<>();
+    Object[] kos = KOManager.getKOElementListWithNone(selectedView2dContainer.getSelectedImagePane()).toArray();
+    for (Object obj : kos) {
+      if (obj instanceof KOSpecialElement) {
+        KOSpecialElement ko = (KOSpecialElement) obj;
+        List<Attributes> attributesList = ko.getAttributesList();
+        JMenuItem koElement = new JMenuItem(ko.getLabel().replace(ko.getLabelPrefix(), "") + "  (" + attributesList.size() + ")");
+        if (attributesList.size() > 0) {
+          allKOList.addAll(attributesList);  // 添加到 allKOList 中
+          koElement.addActionListener(e -> PrintToolManager.PrintAddKOList(attributesList));
+        }
+        // 添加 koElement 到菜单中
+        menu.add(koElement);
+      }
+    }
+
+    // 如果KO组大于1，说明有除了”无“以外的KO组，那么就显示这个菜单
+    if (kos.length > 1) {
+      JMenuItem allElement = new JMenuItem(Messages.getString("PrintToolBar.allSelected") + "  (" + allKOList.size() + ")");
+      if (allKOList.size() > 0) {
+        allElement.addActionListener(e -> PrintToolManager.PrintAddKOList(allKOList));
+      }
+      // 添加 koElement 到菜单中
+      menu.add(allElement);
+    }
+    // 全部关键图像组的菜单
+    return menu;
+  }
+
+  /**
+   * 添加影像到报告
+   * sle 2023年6月28日17:16:03
+   *
+   * @return
+   */
+  public JMenuItem getAddReportMenu() {
+    // 检查号
+    String accessionNumber = TagD.getTagValue(getSelectedViewPane().getImage(), Tag.PatientID, String.class);
+
+    /// 文件夹路径
+    String path = PrintToolManager.GetsUpperPath() + "/Images/Weasis/" + accessionNumber;
+    // 判断文件夹是否存在，不存在则创建
+    File file = new File(path);
+    if (!file.exists()) {
+      file.mkdirs();
+    }
+
+    // 获取原文件名
+    File dicomFile = new File(getSelectedViewPane().getImage().getMediaURI());
+    // 保存文件的格式
+    String fileName = dicomFile.getName();
+    fileName = fileName.substring(0, fileName.lastIndexOf(".")) + ".png";
+
+    // 如果存在则删除
+    File destinationFile = new File(path + "/" + fileName);
+    Boolean exist = destinationFile.exists();
+
+    JMenuItem menu = new JMenuItem(exist ? Messages.getString("View2dContainer.remove_image_to_report") : Messages.getString("View2dContainer.add_image_to_report"));
+    menu.addActionListener(e -> {
+      if (exist) {
+        destinationFile.delete();
+      }
+      // 不存在则新增
+      else {
+        /**
+         * 原始图像的生成图片方法
+         * sle 2023年7月14日10:48:39
+         */
+        PlanarImage image = null;
+        DicomImageElement img = selectedView2dContainer.getSelectedImagePane().getImage();
+        SimpleOpManager manager = img.buildSimpleOpManager(false, false, false, false, 1);
+        PlanarImage inputImage = manager.getFirstNodeInputImage();
+        if (inputImage != null) {
+          PlanarImage rimage = manager.process();
+          if (rimage == null) {
+            rimage = inputImage;
+          }
+          image = rimage;
+        }
+
+        /**
+         * 当前视图的生成图片方法
+         */
+//                PlanarImage image = null;
+//                if (selectedView2dContainer.getSelectedImagePane() instanceof DefaultView2d<DicomImageElement> view2DPane) {
+//                    RenderedImage imgP = ViewTransferHandler.createComponentImage(view2DPane, false);
+//                    image = ImageConversion.toMat(imgP);
+//                }
+
+
+        ImageProcessor.writePNG(image.toMat(), destinationFile);
+      }
+
+      JsonObject json = Json.createObjectBuilder()
+              .add("key", destinationFile.getPath())
+              .add("value", !exist)
+              .build();
+      String jsonString = json.toString();
+
+      WindowsMessageUtil.SendWindowsMessage(jsonString, "报告诊断");
+      WindowsMessageUtil.SendWindowsMessage(jsonString, "编辑诊断");
+      WindowsMessageUtil.SendWindowsMessage(jsonString, "报告审核");
+    });
     return menu;
   }
 

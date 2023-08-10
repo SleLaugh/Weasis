@@ -167,19 +167,36 @@ public class View2dContainer extends DicomViewerPlugin implements PropertyChange
       String componentName = InsertableUtil.getCName(this.getClass());
       String key = "enable"; // NON-NLS
 
-      if (InsertableUtil.getBooleanProperty(
-          BundleTools.SYSTEM_PREFERENCES,
-          bundleName,
-          componentName,
-          InsertableUtil.getCName(ImportToolBar.class),
-          key,
-          true)) {
-        Optional<Toolbar> b =
-            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
-                .filter(ImportToolBar.class::isInstance)
-                .findFirst();
-        b.ifPresent(TOOLBARS::add);
-      }
+      /*
+      隐藏DICOM导入 --2D查看器
+      sle 2023年6月21日10:24:42
+       */
+//      if (InsertableUtil.getBooleanProperty(
+//          BundleTools.SYSTEM_PREFERENCES,
+//          bundleName,
+//          componentName,
+//          InsertableUtil.getCName(ImportToolBar.class),
+//          key,
+//          true)) {
+//        Optional<Toolbar> b =
+//            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
+//                .filter(ImportToolBar.class::isInstance)
+//                .findFirst();
+//        b.ifPresent(TOOLBARS::add);
+//      }
+//      if (InsertableUtil.getBooleanProperty(
+//          BundleTools.SYSTEM_PREFERENCES,
+//          bundleName,
+//          componentName,
+//          InsertableUtil.getCName(ImportToolBar.class),
+//          key,
+//          true)) {
+//        Optional<Toolbar> b =
+//            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
+//                .filter(ImportToolBar.class::isInstance)
+//                .findFirst();
+//        b.ifPresent(TOOLBARS::add);
+//      }
       if (InsertableUtil.getBooleanProperty(
           BundleTools.SYSTEM_PREFERENCES,
           bundleName,
@@ -278,6 +295,19 @@ public class View2dContainer extends DicomViewerPlugin implements PropertyChange
           key,
           true)) {
         TOOLBARS.add(new CineToolBar(80));
+      }
+      /**
+       * 顶部打印栏
+       * sle 2023年7月19日16:13:39
+       */
+      if (InsertableUtil.getBooleanProperty(
+              BundleTools.SYSTEM_PREFERENCES,
+              bundleName,
+              componentName,
+              InsertableUtil.getCName(PrintToolBar.class),
+              key,
+              true)) {
+        TOOLBARS.add(new PrintToolBar(80));
       }
       if (InsertableUtil.getBooleanProperty(
           BundleTools.SYSTEM_PREFERENCES,

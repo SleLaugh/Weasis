@@ -649,7 +649,7 @@ public class View3d extends VolumeCanvas
 
   @Override
   public Font getLayerFont() {
-    Font font = FontItem.DEFAULT_SEMIBOLD.getFont();
+    Font font = FontItem.LARGE.getFont();
     return DefaultView2d.getLayerFont(getFontMetrics(font), getWidth());
   }
 

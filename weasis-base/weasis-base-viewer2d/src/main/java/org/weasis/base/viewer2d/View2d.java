@@ -372,8 +372,7 @@ public class View2d extends DefaultView2d<ImageElement> {
       count = addSeparatorToPopupMenu(popupMenu, count);
 
       GuiUtils.addItemToMenu(popupMenu, manager.getZoomMenu("weasis.contextmenu.zoom"));
-      GuiUtils.addItemToMenu(
-          popupMenu, manager.getOrientationMenu("weasis.contextmenu.orientation"));
+      GuiUtils.addItemToMenu(popupMenu, manager.getOrientationMenu("weasis.contextmenu.orientation"));
       addSeparatorToPopupMenu(popupMenu, count);
 
       GuiUtils.addItemToMenu(popupMenu, manager.getResetMenu("weasis.contextmenu.reset"));

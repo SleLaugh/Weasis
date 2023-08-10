@@ -1158,8 +1158,9 @@ public class View2d extends DefaultView2d<DicomImageElement> {
       count = addSeparatorToPopupMenu(popupMenu, count);
 
       GuiUtils.addItemToMenu(popupMenu, manager.getZoomMenu("weasis.contextmenu.zoom"));
-      GuiUtils.addItemToMenu(
-          popupMenu, manager.getOrientationMenu("weasis.contextmenu.orientation"));
+      GuiUtils.addItemToMenu(popupMenu, manager.getOrientationMenu("weasis.contextmenu.orientation"));
+      GuiUtils.addItemToMenu(popupMenu, manager.getPrintMenu()); // 打印 sle 2023年7月19日16:13:45
+      GuiUtils.addItemToMenu(popupMenu, manager.getAddReportMenu()); // 添加影像至报告 sle 2023年8月10日17:10:18
       GuiUtils.addItemToMenu(popupMenu, manager.getSortStackMenu("weasis.contextmenu.sortstack"));
       addSeparatorToPopupMenu(popupMenu, count);
 

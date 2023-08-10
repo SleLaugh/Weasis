@@ -96,7 +96,7 @@ public class DicomSpecialElement extends MediaElement implements DicomElement {
     initLabel();
   }
 
-  protected String getLabelPrefix() {
+  public String getLabelPrefix() {
     StringBuilder buf = new StringBuilder();
     String modality = TagD.getTagValue(this, Tag.Modality, String.class);
     if (modality != null) {

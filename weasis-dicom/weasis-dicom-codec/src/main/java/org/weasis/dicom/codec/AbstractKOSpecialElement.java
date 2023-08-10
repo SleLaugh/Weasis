@@ -100,6 +100,24 @@ public class AbstractKOSpecialElement extends DicomSpecialElement {
     super(mediaIO);
   }
 
+  /**
+   * sle 2023年8月10日17:06:41
+   * @return
+   */
+  public List<Attributes> getAttributesList() {
+    List<SOPInstanceReferenceAndMAC> sopList = new ArrayList<>();
+    for (Map<String, SOPInstanceReferenceAndMAC> subMap : sopInstanceReferenceMapBySeriesUID.values()) {
+      sopList.addAll(subMap.values());
+    }
+
+    List<Attributes> result = new ArrayList<>();
+    for (SOPInstanceReferenceAndMAC item:sopList){
+      result.add(item.getAttributes());
+    }
+
+    return result;
+  }
+
   @Override
   protected void initLabel() {
     /*

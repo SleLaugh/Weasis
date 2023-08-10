@@ -268,7 +268,7 @@ public class DicomVolTexture extends VolumeTexture implements MediaSeriesGroup {
             double ww = (double) volumePreset.getColorMax() - volumePreset.getColorMin();
             PresetWindowLevel autoLevel =
                 new PresetWindowLevel(
-                    "Auto Level [Image]", // NON-NLS
+                        org.weasis.dicom.codec.Messages.getString("Texture.auto_level_image"), // NON-NLS
                     ww,
                     volumePreset.getColorMin() + ww / 2,
                     LutShape.LINEAR);

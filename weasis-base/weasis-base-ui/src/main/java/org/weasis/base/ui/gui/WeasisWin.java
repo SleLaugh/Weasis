@@ -765,7 +765,11 @@ public class WeasisWin {
           ColorLayerUI.showCenterScreen(about, layer);
         });
     helpMenuItem.add(aboutMenuItem);
-    menuBar.add(helpMenuItem);
+    /**
+     * 隐藏帮助菜单
+     * sle 2023年8月10日16:39:40
+     */
+//    menuBar.add(helpMenuItem);
     return menuBar;
   }
 
@@ -1000,16 +1004,20 @@ public class WeasisWin {
 
     menuFile.add(exportMenu);
     menuFile.add(new JSeparator());
-    DynamicMenu printMenu =
-        new DynamicMenu(Messages.getString("WeasisWin.print")) {
-
-          @Override
-          public void popupMenuWillBecomeVisible() {
-            buildPrintSubMenu(this);
-          }
-        };
-    printMenu.addPopupMenuListener();
-    menuFile.add(printMenu);
+    /**
+     * 隐藏打印
+     * sle 2023年8月10日16:58:27
+     */
+//    DynamicMenu printMenu =
+//        new DynamicMenu(Messages.getString("WeasisWin.print")) {
+//
+//          @Override
+//          public void popupMenuWillBecomeVisible() {
+//            buildPrintSubMenu(this);
+//          }
+//        };
+//    printMenu.addPopupMenuListener();
+//    menuFile.add(printMenu);
 
     menuFile.add(new JSeparator());
     Consumer<ActionEvent> prefAction =

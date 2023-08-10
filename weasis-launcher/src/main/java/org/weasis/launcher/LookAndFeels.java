@@ -90,7 +90,7 @@ public final class LookAndFeels {
 
   /** Changes the look and feel for the whole GUI */
   public String setLookAndFeel(ReadableLookAndFeelInfo look) {
-    ReadableLookAndFeelInfo info = look == null ? defaultDarkTheme : look;
+    ReadableLookAndFeelInfo info = look == null ? defaultLightTheme : look; // 设置默认主题 sle 2023年8月10日17:00:06
     boolean dark = info.isDark();
     try {
       UIManager.setLookAndFeel(info.getClassName());

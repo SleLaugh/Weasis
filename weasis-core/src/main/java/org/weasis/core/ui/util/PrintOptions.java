@@ -26,7 +26,10 @@ public class PrintOptions {
     DPI_150(150),
     DPI_200(200),
     DPI_250(250),
-    DPI_300(300);
+    DPI_300(300),
+    DPI_400(400),
+    DPI_500(500),
+    DPI_600(600);
 
     private final int dpi;
 

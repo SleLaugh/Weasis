@@ -774,24 +774,49 @@ public abstract class DefaultView2d<E extends ImageElement> extends GraphicsPane
 
   @Override
   public Font getLayerFont() {
-    Font font = FontItem.DEFAULT_SEMIBOLD.getFont();
+    Font font = FontItem.LARGE.getFont();
     return getLayerFont(getFontMetrics(font), getWidth());
   }
 
+  /**
+   * 字体自适应
+   * sle 2023年8月10日16:51:59
+   * @param fontMetrics
+   * @param width
+   * @return
+   */
   public static Font getLayerFont(FontMetrics fontMetrics, int width) {
     int minSize = fontMetrics.stringWidth("Cannot read this media!"); // NON-NLS
-    if (minSize * 6 > width) {
-      double ratio = (minSize * 6.0 - width) / minSize;
+    if (minSize * 5.5 > (double) width) {
+      double ratio = (minSize * 5.5 - width) / minSize;
       if (ratio < 1) {
-        return FontItem.SMALL_SEMIBOLD.getFont();
+        return FontItem.DEFAULT.getFont();
       } else if (ratio < 2) {
-        return FontItem.MINI_SEMIBOLD.getFont();
+        return FontItem.MEDIUM.getFont();
+      } else if (ratio < 3) {
+        return FontItem.MINI.getFont();
       } else {
-        return FontItem.MICRO_SEMIBOLD.getFont();
+        return FontItem.MICRO.getFont();
       }
     }
     return fontMetrics.getFont();
   }
+
+
+//  public static Font getLayerFont(FontMetrics fontMetrics, int width) {
+//    int minSize = fontMetrics.stringWidth("Cannot read this media!"); // NON-NLS
+//    if (minSize * 6 > width) {
+//      double ratio = (minSize * 6.0 - width) / minSize;
+//      if (ratio < 1) {
+//        return FontItem.SMALL_SEMIBOLD.getFont();
+//      } else if (ratio < 2) {
+//        return FontItem.MINI_SEMIBOLD.getFont();
+//      } else {
+//        return FontItem.MICRO_SEMIBOLD.getFont();
+//      }
+//    }
+//    return fontMetrics.getFont();
+//  }
 
   /** paint routine */
   @Override
