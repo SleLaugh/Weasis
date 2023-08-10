@@ -48,6 +48,7 @@ import org.weasis.core.api.gui.util.GuiUtils.IconColor;
 import org.weasis.core.api.media.data.TagW;
 import org.weasis.core.api.media.data.TagW.TagType;
 import org.weasis.core.api.service.BundleTools;
+import org.weasis.core.api.util.DicomResource;
 import org.weasis.core.api.util.FontItem;
 import org.weasis.core.api.util.LocalUtil;
 import org.weasis.core.api.util.ResourceUtil;
@@ -294,8 +295,7 @@ public abstract class AcquireMetadataPanel extends JPanel implements TableModelL
     public static String[] getBodyPartValues() {
       // https://dicom.nema.org/medical/dicom/current/output/chtml/part16/chapter_L.html
       List<String> list = new ArrayList<>();
-      try (BufferedReader br =
-          Files.newBufferedReader(ResourceUtil.getResource(Path.of("bodyPartExamined.csv")))) {
+      try (BufferedReader br = Files.newBufferedReader(ResourceUtil.getResource(Path.of(DicomResource.BODY_PART_EXAMINED.name())))) {
         String line;
         while ((line = br.readLine()) != null) {
           String[] columns = line.split(",");

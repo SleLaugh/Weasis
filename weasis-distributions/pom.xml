@@ -246,6 +246,18 @@
                   <outputDirectory>${tmp.bundle.dir}</outputDirectory>
                 </artifactItem>
                 <artifactItem>
+                  <groupId>net.java.dev.jna</groupId>
+                  <artifactId>jna</artifactId>
+                  <version>${jna.version}</version>
+                  <outputDirectory>${tmp.bundle.dir}</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>net.java.dev.jna</groupId>
+                  <artifactId>jna-platform</artifactId>
+                  <version>${jna.version}</version>
+                  <outputDirectory>${tmp.bundle.dir}</outputDirectory>
+                </artifactItem>
+                <artifactItem>
                   <groupId>org.apache.sling</groupId>
                   <artifactId>org.apache.sling.commons.log</artifactId>
                   <version>${sling.commons.log.version}</version>
@@ -468,6 +480,12 @@
                 <artifactItem>
                   <groupId>org.weasis.dicom</groupId>
                   <artifactId>weasis-dicom-sr</artifactId>
+                  <version>${app.version}</version>
+                  <outputDirectory>${tmp.bundle.dir}</outputDirectory>
+                </artifactItem>
+                <artifactItem>
+                  <groupId>org.weasis.dicom</groupId>
+                  <artifactId>weasis-dicom-ylyy</artifactId>
                   <version>${app.version}</version>
                   <outputDirectory>${tmp.bundle.dir}</outputDirectory>
                 </artifactItem>

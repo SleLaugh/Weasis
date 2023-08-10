@@ -26,19 +26,20 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Objects;
-import java.util.Optional;
 import javax.swing.Icon;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.plaf.PanelUI;
+import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamConstants;
+import javax.xml.stream.XMLStreamReader;
+
 import org.weasis.core.Messages;
 import org.weasis.core.api.gui.util.ActionState;
 import org.weasis.core.api.gui.util.ActionW;
@@ -51,6 +52,8 @@ import org.weasis.core.api.image.LayoutConstraints;
 import org.weasis.core.api.media.data.ImageElement;
 import org.weasis.core.api.media.data.MediaSeries;
 import org.weasis.core.api.media.data.Series;
+import org.weasis.core.api.util.DicomResource;
+import org.weasis.core.api.util.ResourceUtil;
 import org.weasis.core.ui.editor.SeriesViewer;
 import org.weasis.core.ui.editor.SeriesViewerEvent;
 import org.weasis.core.ui.editor.SeriesViewerEvent.EVENT;
@@ -60,10 +63,17 @@ import org.weasis.core.ui.model.graphic.Graphic;
 import org.weasis.core.ui.model.graphic.GraphicSelectionListener;
 import org.weasis.core.ui.pref.Monitor;
 import org.weasis.core.ui.util.MouseEventDouble;
+import org.weasis.core.util.FileUtil;
 
 public abstract class ImageViewerPlugin<E extends ImageElement> extends ViewerPlugin<E> {
 
   public static final String F_VIEWS = Messages.getString("ImageViewerPlugin.2");
+
+  /**
+   * 检查类型对应布局的配置文件 sle
+   * 2023年5月10日17:57:55
+   */
+  private static final Map<String, String> modalityLayoutList = readLayoutListByModality();
 
   // A model must have at least one view that inherited of DefaultView2d
   public static final Class<?> view2dClass = ViewCanvas.class;
@@ -133,6 +143,19 @@ public abstract class ImageViewerPlugin<E extends ImageElement> extends ViewerPl
           2,
           4,
           view2dClass.getName());
+
+  public static final List<GridBagLayoutModel> DEFAULT_LAYOUT_LIST =
+          List.of(
+                  VIEWS_1x1,
+                  VIEWS_1x2,
+                  VIEWS_1x3,
+                  VIEWS_1x4,
+                  VIEWS_2x1,
+                  VIEWS_2x2_f2,
+                  VIEWS_2_f1x2,
+                  VIEWS_2x2,
+                  VIEWS_2x3,
+                  VIEWS_2x4);
 
   /** The current focused <code>ImagePane</code>. The default is 0. */
   protected ViewCanvas<E> selectedImagePane = null;
@@ -1104,5 +1127,79 @@ public abstract class ImageViewerPlugin<E extends ImageElement> extends ViewerPl
       pos = 0;
     }
     setSelectedImagePane(view2ds.get(pos));
+  }
+
+  /**
+   * 读取检查类型对应布局的配置文件 sle
+   * 2023年5月10日17:58:17     *
+   * @return 检查类型-布局的map
+   */
+  private static Map<String, String> readLayoutListByModality() {
+    Map<String, String> map = new TreeMap();
+    XMLStreamReader reader = null;
+
+    try {
+      File file = ResourceUtil.getResource(DicomResource.MODALITY_LAYOUT);
+      if (!file.canRead()) {
+        return map;
+      }
+
+      //创建一个XMLInputFactory对象
+      XMLInputFactory factory = XMLInputFactory.newInstance();
+      //通过factory对象的createXMLStreamReader方法加载xml文件，获取XMLStreamReader对象
+      reader = factory.createXMLStreamReader(new FileInputStream(file));
+      //定义两个变量用于存储modality和id的值
+      String modality = null;
+      String id = null;
+      //遍历reader对象
+      while (reader.hasNext()) {
+        //获取当前事件类型
+        int eventType = reader.next();
+        //如果事件类型是开始元素
+        if (eventType == XMLStreamConstants.START_ELEMENT) {
+          //获取当前元素的本地名称
+          String localName = reader.getLocalName();
+          //如果本地名称是layout
+          if ("layout".equals(localName)) {
+            //获取modality属性值
+            modality = reader.getAttributeValue(null, "modality");
+            //获取id属性值
+            id = reader.getAttributeValue(null, "id");
+            map.put(modality, id);
+          }
+        }
+      }
+    } catch (Exception var10) {
+      return map;
+    } finally {
+      FileUtil.safeClose(reader);
+    }
+    return map;
+  }
+
+  /**
+   * 获取检查类型对应布局
+   * @return
+   */
+  public static Map<String, String> getModalityLayoutList() {
+    return modalityLayoutList;
+  }
+
+  /**
+   * 根据检查类型，获取配置文件中的布局 sle
+   * 2023年5月10日17:58:41     *
+   * @param modality 检查类型
+   * @return 布局方式，如果不存在的话，返回null
+   */
+  public GridBagLayoutModel getLayoutByModality(String modality) {
+    String modelID = modalityLayoutList.get(modality);
+    if (modelID == null || modelID.isEmpty()) {
+      return null;
+    }
+    GridBagLayoutModel result = getViewLayout(modelID);
+    if (result.getId() != VIEWS_1x1.getId()) {
+      return result;
+    }
+    return null;
   }
 }

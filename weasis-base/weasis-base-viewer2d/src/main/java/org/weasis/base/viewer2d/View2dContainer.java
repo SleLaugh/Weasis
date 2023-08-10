@@ -90,19 +90,7 @@ public class View2dContainer extends ImageViewerPlugin<ImageElement>
           "layout_histo", // NON-NLS
           Messages.getString("View2dContainer.histogram"));
   // Unmodifiable list of the default layout elements
-  public static final List<GridBagLayoutModel> DEFAULT_LAYOUT_LIST =
-      List.of(
-          VIEWS_1x1,
-          VIEWS_1x2,
-          VIEWS_1x3,
-          VIEWS_1x4,
-          VIEWS_2x1,
-          VIEWS_2x1_r1xc2_histo,
-          VIEWS_2x2_f2,
-          VIEWS_2_f1x2,
-          VIEWS_2x2,
-          VIEWS_2x3,
-          VIEWS_2x4);
+  public static final List<GridBagLayoutModel> DEFAULT_LAYOUT_LIST = InitLayoutList();
 
   // Static tools shared by all the View2dContainer instances, tools are registered when a container
   // is selected
@@ -530,5 +518,16 @@ public class View2dContainer extends ImageViewerPlugin<ImageElement>
         }
       }
     }
+  }
+
+  /**
+   * 初始化布局列表 sle
+   * 2023年5月15日11:41:13
+   * @return
+   */
+  private static List<GridBagLayoutModel> InitLayoutList(){
+    List<GridBagLayoutModel> list =new ArrayList<>(ImageViewerPlugin.DEFAULT_LAYOUT_LIST);
+    list.add( VIEWS_2x1_r1xc2_histo);
+    return list;
   }
 }

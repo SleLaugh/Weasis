@@ -11,11 +11,8 @@ package org.weasis.dicom.codec.display;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
@@ -31,15 +28,22 @@ import org.weasis.core.util.FileUtil;
 import org.weasis.core.util.StringUtil;
 import org.weasis.dicom.codec.Messages;
 import org.weasis.dicom.codec.TagD;
-import org.weasis.dicom.codec.utils.DicomResource;
+import org.weasis.core.api.util.DicomResource;
+
+import static org.weasis.dicom.codec.display.CornerInfoData.ELEMENT_NUMBER;
 
 public class ModalityView {
   private static final Logger LOGGER = LoggerFactory.getLogger(ModalityView.class);
 
   static final Map<Modality, ModalityInfoData> MODALITY_VIEW_MAP = new EnumMap<>(Modality.class);
 
-  public static final ModalityInfoData DEFAULT_MODALITY_VIEW =
-      new ModalityInfoData(Modality.DEFAULT, null);
+  public static final ModalityInfoData DEFAULT_MODALITY_VIEW = new ModalityInfoData(Modality.DEFAULT, null);
+
+  /**
+   * 四角信息配置文件
+   * sle 2023年8月10日16:23:31
+   */
+  public static final Map<Modality, Map<CornerDisplay, TagView[]>> ATTRIBUTE_VIEW_MAP = new LinkedHashMap<>();
 
   static {
     // Format associated to DICOM field:
@@ -248,6 +252,7 @@ public class ModalityView {
       throws XMLStreamException {
 
     TagView[] disElements = data.getCornerInfo(corner).getInfos();
+    TagView[] attribute = new TagView[ELEMENT_NUMBER];
 
     boolean state = true;
     int index = -1;
@@ -257,6 +262,7 @@ public class ModalityView {
         case XMLStreamConstants.CHARACTERS:
           if (index > 0 && index <= 7) {
             disElements[index - 1] = getTag(xmler.getText(), format);
+            attribute[index - 1] = getTag(xmler.getText(), format);
             index = -1; // Reset current index and format
             format = null;
           }
@@ -265,6 +271,7 @@ public class ModalityView {
           if ("p".equals(xmler.getName().getLocalPart()) && xmler.getAttributeCount() >= 1) {
             index = TagUtil.getIntegerTagAttribute(xmler, "index", -1); // NON-NLS
             format = xmler.getAttributeValue(null, "format"); // NON-NLS
+            format = format == null ? "" : format;
           }
           break;
         case XMLStreamConstants.END_ELEMENT:
@@ -276,6 +283,15 @@ public class ModalityView {
           break;
       }
     }
+
+    // 因为原本的逻辑是有继承的，无法获取基本配置文件中的内容，所以新创建一个变量来存
+    // sle 2023年5月25日14:15:28
+    Map<CornerDisplay, TagView[]> cornerDisplayMap = ATTRIBUTE_VIEW_MAP.get(data.getModality());
+    if (cornerDisplayMap == null) {
+      cornerDisplayMap = new LinkedHashMap<>();
+    }
+    cornerDisplayMap.put(corner, attribute);
+    ATTRIBUTE_VIEW_MAP.put(data.getModality(), cornerDisplayMap);
   }
 
   private static TagView getTag(String name, String format) {

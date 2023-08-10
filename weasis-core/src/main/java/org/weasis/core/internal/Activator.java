@@ -35,6 +35,7 @@ import org.weasis.core.api.media.data.Codec;
 import org.weasis.core.api.service.AuditLog;
 import org.weasis.core.api.service.BundlePreferences;
 import org.weasis.core.api.service.BundleTools;
+import org.weasis.core.api.util.DicomResource;
 import org.weasis.core.api.util.ResourceUtil;
 import org.weasis.core.ui.docking.UIManager;
 import org.weasis.core.ui.editor.FileModel;
@@ -60,7 +61,7 @@ public class Activator implements BundleActivator, ServiceListener {
     bundleContext.addServiceListener(this, BundleTools.createServiceFilter(Codec.class));
 
     initLoggerAndAudit(bundleContext);
-    File file = ResourceUtil.getResource("presets.xml");
+    File file = ResourceUtil.getResource(DicomResource.PRESETS);
     if (file.canRead()) {
       System.setProperty("dicom.presets.path", file.getPath());
     }

@@ -37,7 +37,7 @@ import org.weasis.core.api.util.ResourceUtil;
 import org.weasis.core.util.FileUtil;
 import org.weasis.core.util.StringUtil;
 import org.weasis.dicom.codec.TransferSyntax;
-import org.weasis.dicom.codec.utils.DicomResource;
+import org.weasis.core.api.util.DicomResource;
 import org.weasis.dicom.explorer.Messages;
 import org.weasis.dicom.explorer.pref.node.DicomWebNode.WebType;
 

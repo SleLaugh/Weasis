@@ -68,6 +68,12 @@ public class DicomImageElement extends ImageElement implements DicomElement {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DicomImageElement.class);
 
+  /**
+   * 读取配置文件中的窗宽窗位
+   * sle 2023年8月10日16:27:31
+   */
+  public static final Map<String, List<PresetWindowLevel>> presetListByModality = PresetWindowLevel.getPresetListByModality();
+
   private DicomImageAdapter adapter = null;
   private Collection<LutShape> lutShapeCollection = null;
 

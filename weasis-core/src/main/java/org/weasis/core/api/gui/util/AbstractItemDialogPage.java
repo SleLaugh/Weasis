@@ -10,6 +10,9 @@
 package org.weasis.core.api.gui.util;
 
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -17,6 +20,14 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JPanel;
+import javax.xml.XMLConstants;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.w3c.dom.Document;
 import org.weasis.core.api.gui.Insertable;
 
 public abstract class AbstractItemDialogPage extends JPanel implements PageItem, Insertable {
@@ -144,5 +155,40 @@ public abstract class AbstractItemDialogPage extends JPanel implements PageItem,
 
   public JComponent getMenuPanel() {
     return null;
+  }
+
+  /**
+   * 写入xml文件 sle
+   * 2023年6月2日14:49:05
+   * @param doc  xml内容
+   * @param file xml文件
+   */
+  protected void saveDocumentXml(Document doc, File file) {
+    try {
+      // 写入xml
+      TransformerFactory transformerFactory = TransformerFactory.newInstance();
+      transformerFactory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true); // 启用安全处理特性
+      Transformer transformer = transformerFactory.newTransformer();
+
+      // 设置输出格式
+      transformer.setOutputProperty(OutputKeys.INDENT, "yes"); // 自动添加缩进
+      transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // 设置缩进的空格数
+
+      // 创建StringWriter来保存XML内容
+      StringWriter writer = new StringWriter();
+      StreamResult result = new StreamResult(writer);
+      DOMSource source = new DOMSource(doc);
+      transformer.transform(source, result);
+
+      String xmlContent = writer.toString().trim().replaceAll("\n\\s*\n", "\n"); // 获取XML内容并去除多余的空白行
+      xmlContent = xmlContent.replaceAll("(<!--[^-]*-->)(\\S)", "$1\n$2"); // 将注释的元素单独一行显示
+
+      // 将XML内容写入文件
+      try (PrintWriter printWriter = new PrintWriter(file.getPath())) {
+        printWriter.print(xmlContent);
+      }
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 }
