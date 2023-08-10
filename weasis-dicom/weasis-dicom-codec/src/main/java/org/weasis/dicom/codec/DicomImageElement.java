@@ -16,6 +16,8 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.dcm4che3.data.UID;
@@ -335,11 +337,52 @@ public class DicomImageElement extends ImageElement implements DicomElement {
     return getPresetList(wl, false);
   }
 
+  /**
+   * 获取窗宽窗位（预设）列表 sle
+   * 2023年5月11日09:36:01
+   * sle 2023年6月29日11:50:20 添加逻辑，将影像自带的窗宽窗位的快捷键清空，并且汉化
+   * @param wl
+   * @param reload
+   * @return
+   */
   public List<PresetWindowLevel> getPresetList(WlPresentation wl, boolean reload) {
+    List<PresetWindowLevel> result;
     if (isImageInitialized()) {
-      return adapter.getPresetList(wl, reload);
+      result = adapter.getPresetList(wl, reload);
     }
-    return Collections.emptyList();
+    else{
+      result = Collections.emptyList();
+    }
+    String autoLevelStr = "Auto Level [Image]";
+    String dicomStr = "[DICOM]";
+    String defaultStr = "Default";
+
+    // 删除主动色阶部分
+    result = result.stream()
+            .filter(preset -> !preset.getName().equals(autoLevelStr))
+            .collect(Collectors.toList());
+
+    for (int i = 0; i < result.size(); i++) {
+      PresetWindowLevel preset = result.get(i);
+
+      // 判断是否是主动色阶
+      if(preset.getName().contains(autoLevelStr)){
+        PresetWindowLevel autoLevel = new PresetWindowLevel(Messages.getString("Texture.auto_level_image"), preset.getWindow(), preset.getLevel(), preset.getLutShape());
+        result.set(i, autoLevel);
+      }
+
+      // 判断是否是影像自带，如果是的话则删除掉快捷键
+      if(preset.getName().contains(dicomStr)){
+        String name = preset.getName().replace(dicomStr, Messages.getString("Texture.dicom"));
+        // 判断是否是默认，如果是的话，则汉化
+        if(name.contains(defaultStr)){
+          name = name.replace(defaultStr, Messages.getString("Texture.default"));
+        }
+        PresetWindowLevel autoLevel = new PresetWindowLevel(name, preset.getWindow(), preset.getLevel(), preset.getLutShape());
+        result.set(i, autoLevel);
+      }
+    }
+    return result;
   }
 
   @Override

@@ -24,11 +24,12 @@ import org.weasis.dicom.codec.TagD;
 import org.weasis.dicom.explorer.DicomExplorer.SeriesPane;
 import org.weasis.dicom.explorer.DicomExplorer.StudyPane;
 import org.weasis.dicom.explorer.pref.download.DicomExplorerPrefView;
+import org.weasis.dicom.explorer.Messages;
 
 public class DicomSorter {
   public enum SortingTime {
-    CHRONOLOGICAL(0, "Chronological order"),
-    INVERSE_CHRONOLOGICAL(1, "Reverse chronological order");
+    CHRONOLOGICAL(0, Messages.getString("DicomSorter.date_sequence")),
+    INVERSE_CHRONOLOGICAL(1, Messages.getString("DicomSorter.date_reverse"));
 
     private final int id;
     private final String title;

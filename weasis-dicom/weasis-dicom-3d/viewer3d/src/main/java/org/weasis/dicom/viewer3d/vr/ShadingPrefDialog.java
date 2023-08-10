@@ -32,14 +32,14 @@ import org.weasis.dicom.viewer3d.Messages;
 public class ShadingPrefDialog extends JDialog {
 
   private static final int MAX_SLIDER_VALUE = 512;
-  //  private final float ambient;
-  //  private final float diffuse;
-  //  private final float specular;
+    private final float ambient;
+    private final float diffuse;
+    private final float specular;
   private final float specularPower;
   private final View3d view3d;
-  //  JSliderW ambientSlider;
-  //  JSliderW diffuseSlider;
-  //  JSliderW specularSlider;
+    JSliderW ambientSlider;
+    JSliderW diffuseSlider;
+    JSliderW specularSlider;
   JSliderW powerSlider;
 
   private boolean render = true;
@@ -54,12 +54,13 @@ public class ShadingPrefDialog extends JDialog {
     this.setIconImage(ResourceUtil.getIcon(ActionIcon.VOLUME).getImage());
 
     ShadingOptions options = view3d.getRenderingLayer().getShadingOptions();
-    //    this.ambient = options.getAmbient();
-    //    this.diffuse = options.getDiffuse();
-    //    this.specular = options.getSpecular();
+        this.ambient = options.getAmbient();
+        this.diffuse = options.getDiffuse();
+        this.specular = options.getSpecular();
     this.specularPower = options.getSpecularPower();
     init();
     GuiUtils.setPreferredWidth(this, 550);
+    GuiUtils.setPreferredHeight(this, 470,470);
     pack();
   }
 
@@ -67,17 +68,17 @@ public class ShadingPrefDialog extends JDialog {
     JPanel contentPane = GuiUtils.getVerticalBoxLayoutPanel();
     contentPane.setBorder(GuiUtils.getEmptyBorder(10, 15, 10, 15));
 
-    // ambientSlider = createSlider("Ambient", 0, 1, realToSlider(ambient));
-    // contentPane.add(GuiUtils.boxVerticalStrut(Insertable.BLOCK_SEPARATOR));
-    // contentPane.add(ambientSlider);
-    //
-    // diffuseSlider = createSlider("Diffuse", 0, 1, realToSlider(diffuse));
-    // contentPane.add(GuiUtils.boxVerticalStrut(Insertable.BLOCK_SEPARATOR));
-    // contentPane.add(diffuseSlider);
-    //
-    // specularSlider = createSlider("Specular", 0, 1, realToSlider(specular));
-    // contentPane.add(GuiUtils.boxVerticalStrut(Insertable.BLOCK_SEPARATOR));
-    // contentPane.add(specularSlider);
+     ambientSlider = createSlider(Messages.getString("shadingOptions.ambient"), 0, 1, realToSlider(ambient));
+     contentPane.add(GuiUtils.boxVerticalStrut(Insertable.BLOCK_SEPARATOR));
+     contentPane.add(ambientSlider);
+
+     diffuseSlider = createSlider(Messages.getString("shadingOptions.diffuse"), 0, 1, realToSlider(diffuse));
+     contentPane.add(GuiUtils.boxVerticalStrut(Insertable.BLOCK_SEPARATOR));
+     contentPane.add(diffuseSlider);
+
+     specularSlider = createSlider(Messages.getString("shadingOptions.specular"), 0, 1, realToSlider(specular));
+     contentPane.add(GuiUtils.boxVerticalStrut(Insertable.BLOCK_SEPARATOR));
+     contentPane.add(specularSlider);
 
     powerSlider =
         createSlider(
@@ -92,9 +93,9 @@ public class ShadingPrefDialog extends JDialog {
         e -> {
           Preset p = view3d.getVolumePreset();
           render = false;
-          // ambientSlider.setValue(realToSlider(ambient));
-          // diffuseSlider.setValue(realToSlider(diffuse));
-          // specularSlider.setValue(realToSlider(specular));
+           ambientSlider.setValue(realToSlider(ambient));
+           diffuseSlider.setValue(realToSlider(diffuse));
+           specularSlider.setValue(realToSlider(specular));
           powerSlider.setValue(realToSliderPowerValue(specularPower));
           updateSliderText();
           render = true;
@@ -151,19 +152,19 @@ public class ShadingPrefDialog extends JDialog {
               options.setSpecularPower(v);
               val = DecFormatter.oneDecimal(v);
             }
-            //            else if (s == ambientSlider) {
-            //              float v = sliderToReal(model.getValue());
-            //              options.setAmbient(v);
-            //              val = DecFormatter.twoDecimal(v);
-            //            } else if (s == diffuseSlider) {
-            //              float v = sliderToReal(model.getValue());
-            //              options.setDiffuse(v);
-            //              val = DecFormatter.twoDecimal(v);
-            //            } else if (s == specularSlider) {
-            //              float v = sliderToReal(model.getValue());
-            //              options.setSpecular(v);
-            //              val = DecFormatter.twoDecimal(v);
-            //            }
+            else if (s == ambientSlider) {
+              float v = sliderToReal(model.getValue());
+              options.setAmbient(v);
+              val = DecFormatter.twoDecimal(v);
+            } else if (s == diffuseSlider) {
+              float v = sliderToReal(model.getValue());
+              options.setDiffuse(v);
+              val = DecFormatter.twoDecimal(v);
+            } else if (s == specularSlider) {
+              float v = sliderToReal(model.getValue());
+              options.setSpecular(v);
+              val = DecFormatter.twoDecimal(v);
+            }
           }
           String result = title + StringUtil.COLON_AND_SPACE + val;
           SliderChangeListener.updateSliderProperties(s, result);
@@ -190,20 +191,20 @@ public class ShadingPrefDialog extends JDialog {
   }
 
   private void updateSliderText() {
-    //    ambientSlider.setValue(realToSlider(ambient));
-    //    String result = "Ambient" + StringUtil.COLON_AND_SPACE + DecFormatter.twoDecimal(ambient);
-    //    SliderChangeListener.updateSliderProperties(ambientSlider, result);
-    //
-    //    diffuseSlider.setValue(realToSlider(diffuse));
-    //    result = "Diffuse" + StringUtil.COLON_AND_SPACE + DecFormatter.twoDecimal(diffuse);
-    //    SliderChangeListener.updateSliderProperties(diffuseSlider, result);
-    //
-    //    specularSlider.setValue(realToSlider(specular));
-    //    result = "Specular" + StringUtil.COLON_AND_SPACE + DecFormatter.twoDecimal(specular);
-    //    SliderChangeListener.updateSliderProperties(specularSlider, result);
+    ambientSlider.setValue(realToSlider(ambient));
+    String result = Messages.getString("shadingOptions.ambient") + StringUtil.COLON_AND_SPACE + DecFormatter.twoDecimal(ambient);
+    SliderChangeListener.updateSliderProperties(ambientSlider, result);
+
+    diffuseSlider.setValue(realToSlider(diffuse));
+    result = Messages.getString("shadingOptions.diffuse") + StringUtil.COLON_AND_SPACE + DecFormatter.twoDecimal(diffuse);
+    SliderChangeListener.updateSliderProperties(diffuseSlider, result);
+
+    specularSlider.setValue(realToSlider(specular));
+    result = Messages.getString("shadingOptions.specular") + StringUtil.COLON_AND_SPACE + DecFormatter.twoDecimal(specular);
+    SliderChangeListener.updateSliderProperties(specularSlider, result);
 
     powerSlider.setValue(realToSliderPowerValue(specularPower));
-    String result =
+    result =
         Messages.getString("shininess")
             + StringUtil.COLON_AND_SPACE
             + DecFormatter.oneDecimal(specularPower);
@@ -213,9 +214,9 @@ public class ShadingPrefDialog extends JDialog {
   private void updateValues(float specularPower) {
     ShadingOptions options = view3d.getRenderingLayer().getShadingOptions();
     view3d.getRenderingLayer().setEnableRepaint(false);
-    //    options.setAmbient(ambient);
-    //    options.setDiffuse(diffuse);
-    //    options.setSpecular(specular);
+        options.setAmbient(ambient);
+        options.setDiffuse(diffuse);
+        options.setSpecular(specular);
     options.setSpecularPower(specularPower);
     view3d.getRenderingLayer().setEnableRepaint(true);
     view3d.getRenderingLayer().fireLayerChanged();

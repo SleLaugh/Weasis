@@ -11,6 +11,7 @@ package org.weasis.dicom.explorer.print;
 
 import org.weasis.core.ui.util.PrintOptions;
 import org.weasis.dicom.explorer.print.DicomPrintDialog.FilmSize;
+import org.weasis.dicom.explorer.print.SelectOptionManager;
 
 /**
  * @author Marcelo Porto (marcelo@animati.com.br)
@@ -18,19 +19,19 @@ import org.weasis.dicom.explorer.print.DicomPrintDialog.FilmSize;
  * @since 09/01/2012
  */
 public class DicomPrintOptions extends PrintOptions {
-  public static final String DEF_MEDIUM_TYPE = "BLUE FILM"; // NON-NLS
-  public static final String DEF_PRIORITY = "LOW";
-  public static final String DEF_FILM_DEST = "MAGAZINE";
+  public static final String DEF_MEDIUM_TYPE = SelectOptionManager.GetFirstOptionValue("mediumType"); // NON-NLS
+  public static final String DEF_PRIORITY = SelectOptionManager.GetFirstOptionValue("priority");
+  public static final String DEF_FILM_DEST = SelectOptionManager.GetFirstOptionValue("filmDestination");
   public static final int DEF_NUM_COPIES = 1;
   public static final boolean DEF_COLOR = false;
-  public static final String DEF_FILM_ORIENTATION = "PORTRAIT";
+  public static final String DEF_FILM_ORIENTATION = SelectOptionManager.GetFirstOptionValue("filmOrientation");
   public static final String DEF_IMG_DISP_FORMAT = "STANDARD\\1,1"; // NON-NLS
   public static final FilmSize DEF_FILM_SIZE = FilmSize.IN8X10;
-  public static final String DEF_MAGNIFICATION_TYPE = "CUBIC";
-  public static final String DEF_SMOOTHING_TYPE = "MEDIUM";
-  public static final String DEF_BORDER_DENSITY = "WHITE";
-  public static final String DEF_TRIM = "NO";
-  public static final String DEF_EMPTY_DENSITY = "BLACK";
+  public static final String DEF_MAGNIFICATION_TYPE = SelectOptionManager.GetFirstOptionValue("magnificationType");
+  public static final String DEF_SMOOTHING_TYPE = SelectOptionManager.GetFirstOptionValue("smoothingType");
+  public static final String DEF_BORDER_DENSITY = SelectOptionManager.GetFirstOptionValue("color");
+  public static final String DEF_TRIM = SelectOptionManager.GetFirstOptionValue("whether");
+  public static final String DEF_EMPTY_DENSITY = SelectOptionManager.GetFirstOptionValue("color");
   public static final boolean DEF_SHOW_ANNOTATIONS = true;
   public static final boolean DEF_PRINT_SEL_VIEW = false;
   public static final PrintOptions.DotPerInches DEF_DPI = PrintOptions.DotPerInches.DPI_150;
@@ -76,6 +77,9 @@ public class DicomPrintOptions extends PrintOptions {
   public String getBorderDensity() {
     return borderDensity;
   }
+  public String getBorderDensity(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("color",borderDensity): borderDensity;
+  }
 
   public void setBorderDensity(String borderDensity) {
     this.borderDensity = borderDensity;
@@ -83,6 +87,9 @@ public class DicomPrintOptions extends PrintOptions {
 
   public String getEmptyDensity() {
     return emptyDensity;
+  }
+  public String getEmptyDensity(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("color",emptyDensity): emptyDensity;
   }
 
   public void setEmptyDensity(String emptyDensity) {
@@ -92,6 +99,9 @@ public class DicomPrintOptions extends PrintOptions {
   public String getFilmDestination() {
     return filmDestination;
   }
+  public String getFilmDestination(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("filmDestination",filmDestination): filmDestination;
+  }
 
   public void setFilmDestination(String filmDestination) {
     this.filmDestination = filmDestination;
@@ -99,6 +109,9 @@ public class DicomPrintOptions extends PrintOptions {
 
   public String getFilmOrientation() {
     return filmOrientation;
+  }
+  public String getFilmOrientation(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("filmOrientation",filmOrientation): filmOrientation;
   }
 
   public void setFilmOrientation(String filmOrientation) {
@@ -124,6 +137,9 @@ public class DicomPrintOptions extends PrintOptions {
   public String getMagnificationType() {
     return magnificationType;
   }
+  public String getMagnificationType(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("magnificationType",magnificationType): magnificationType;
+  }
 
   public void setMagnificationType(String magnificationType) {
     this.magnificationType = magnificationType;
@@ -139,6 +155,9 @@ public class DicomPrintOptions extends PrintOptions {
 
   public String getMediumType() {
     return mediumType;
+  }
+  public String getMediumType(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("mediumType",mediumType): mediumType;
   }
 
   public void setMediumType(String mediumType) {
@@ -164,6 +183,9 @@ public class DicomPrintOptions extends PrintOptions {
   public String getPriority() {
     return priority;
   }
+  public String getPriority(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("priority",priority): priority;
+  }
 
   public void setPriority(String priority) {
     this.priority = priority;
@@ -172,6 +194,9 @@ public class DicomPrintOptions extends PrintOptions {
   public String getSmoothingType() {
     return smoothingType;
   }
+  public String getSmoothingType(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("smoothingType",smoothingType): smoothingType;
+  }
 
   public void setSmoothingType(String smoothingType) {
     this.smoothingType = smoothingType;
@@ -179,6 +204,9 @@ public class DicomPrintOptions extends PrintOptions {
 
   public String getTrim() {
     return trim;
+  }
+  public String getTrim(boolean getTitle) {
+    return getTitle ?  SelectOptionManager.GetOptionTitle("whether",trim): trim;
   }
 
   public void setTrim(String trim) {

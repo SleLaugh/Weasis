@@ -99,10 +99,12 @@ public class ViewerToolBar<E extends ImageElement> extends WtoolBar implements A
 
     if ((activeMouse & InputEvent.BUTTON1_DOWN_MASK) == InputEvent.BUTTON1_DOWN_MASK) {
       mouseLeft = buildMouseButton(actions, MouseActions.T_LEFT);
-      mouseLeft.setToolTipText(
-          Messages.getString("ViewerToolBar.change")
-              + " "
-              + Messages.getString("ViewerToolBar.m_action"));
+      // 隐藏鼠标左键快捷键的提示，因为会和输入法切换重叠 sle 2023年8月10日11:12:11
+//      mouseLeft.setToolTipText(
+//          Messages.getString("ViewerToolBar.left_change")
+//              + " "
+//              + Messages.getString("ViewerToolBar.m_action"));
+      mouseLeft.setToolTipText(Messages.getString("ViewerToolBar.left_change"));
       add(mouseLeft);
     } else {
       mouseLeft = null;
@@ -110,6 +112,8 @@ public class ViewerToolBar<E extends ImageElement> extends WtoolBar implements A
 
     if ((activeMouse & InputEvent.BUTTON3_DOWN_MASK) == InputEvent.BUTTON3_DOWN_MASK) {
       mouseRight = buildMouseButton(actions, MouseActions.T_RIGHT);
+      mouseRight.setToolTipText(
+              Messages.getString("ViewerToolBar.right_change"));
       add(mouseRight);
     } else {
       mouseRight = null;
@@ -126,7 +130,7 @@ public class ViewerToolBar<E extends ImageElement> extends WtoolBar implements A
               return getPopupMenuScroll(this);
             }
           };
-      mouseWheel.setToolTipText(Messages.getString("ViewerToolBar.change"));
+      mouseWheel.setToolTipText(Messages.getString("ViewerToolBar.wheel_change"));
       add(mouseWheel);
     } else {
       mouseWheel = null;
@@ -186,7 +190,7 @@ public class ViewerToolBar<E extends ImageElement> extends WtoolBar implements A
           }
         };
     button.setActionCommand(action);
-    button.setToolTipText(Messages.getString("ViewerToolBar.change"));
+    button.setToolTipText(Messages.getString("ViewerToolBar.middle_down"));
     return button;
   }
 

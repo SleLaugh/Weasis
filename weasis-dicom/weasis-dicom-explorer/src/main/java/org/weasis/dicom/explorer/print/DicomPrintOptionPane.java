@@ -22,6 +22,7 @@ import org.weasis.core.api.gui.util.GuiUtils;
 import org.weasis.core.ui.util.PrintOptions;
 import org.weasis.core.util.StringUtil;
 import org.weasis.dicom.explorer.Messages;
+import org.weasis.dicom.explorer.print.SelectOptionManager;
 import org.weasis.dicom.explorer.print.DicomPrintDialog.FilmSize;
 
 public class DicomPrintOptionPane extends JPanel {
@@ -63,21 +64,13 @@ public class DicomPrintOptionPane extends JPanel {
         GuiUtils.NEWLINE);
     mediumTypeComboBox = new JComboBox<>();
     mediumTypeComboBox.setModel(
-        new DefaultComboBoxModel<>(
-            new String[] {
-              DicomPrintOptions.DEF_MEDIUM_TYPE,
-              "CLEAR FILM", // NON-NLS
-              "MAMMO CLEAR FILM", // NON-NLS
-              "MAMMO BLUE FILM", // NON-NLS
-              "PAPER" // NON-NLS
-            }));
+            new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("mediumType")));
     add(mediumTypeComboBox);
 
     add(new JLabel(Messages.getString("DicomPrintDialog.priority") + StringUtil.COLON));
     priorityComboBox =
-        new JComboBox<>(
-            new DefaultComboBoxModel<>(
-                new String[] {DicomPrintOptions.DEF_PRIORITY, "MED", "HIGH"})); // NON-NLS
+            new JComboBox<>(
+                    new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("priority"))); // NON-NLS
     add(priorityComboBox);
 
     add(
@@ -85,9 +78,8 @@ public class DicomPrintOptionPane extends JPanel {
         GuiUtils.NEWLINE);
 
     filmDestinationComboBox =
-        new JComboBox<>(
-            new DefaultComboBoxModel<>(
-                new String[] {DicomPrintOptions.DEF_FILM_DEST, "PROCESSOR"}));
+            new JComboBox<>(
+                    new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("filmDestination")));
     add(filmDestinationComboBox);
 
     add(new JLabel(Messages.getString("DicomPrintDialog.copies") + StringUtil.COLON));
@@ -105,9 +97,8 @@ public class DicomPrintOptionPane extends JPanel {
         new JLabel(Messages.getString("DicomPrintDialog.film_orientation") + StringUtil.COLON),
         GuiUtils.NEWLINE);
     filmOrientationComboBox =
-        new JComboBox<>(
-            new DefaultComboBoxModel<>(
-                new String[] {DicomPrintOptions.DEF_FILM_ORIENTATION, "LANDSCAPE"}));
+            new JComboBox<>(
+                    new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("filmOrientation")));
     add(filmOrientationComboBox);
 
     add(new JLabel(Messages.getString("DicomPrintDialog.size_id") + StringUtil.COLON));
@@ -123,27 +114,22 @@ public class DicomPrintOptionPane extends JPanel {
 
     add(new JLabel(Messages.getString("DicomPrintDialog.magn_type") + StringUtil.COLON));
     magnificationTypeComboBox =
-        new JComboBox<>(
-            new DefaultComboBoxModel<>(
-                new String[] {
-                  "REPLICATE", "BILINEAR", DicomPrintOptions.DEF_MAGNIFICATION_TYPE
-                })); // NON-NLS
+            new JComboBox<>(
+                    new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("magnificationType"))); // NON-NLS
     add(magnificationTypeComboBox);
 
     add(
         new JLabel(Messages.getString("DicomPrintDialog.smooth") + StringUtil.COLON),
         GuiUtils.NEWLINE);
     smoothingTypeComboBox =
-        new JComboBox<>(
-            new DefaultComboBoxModel<>(
-                new String[] {DicomPrintOptions.DEF_SMOOTHING_TYPE, "SHARP", "SMOOTH"})); // NON-NLS
+            new JComboBox<>(
+                    new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("smoothingType"))); // NON-NLS
     add(smoothingTypeComboBox);
 
     add(new JLabel(Messages.getString("DicomPrintDialog.border") + StringUtil.COLON));
     borderDensityComboBox =
-        new JComboBox<>(
-            new DefaultComboBoxModel<>(
-                new String[] {"BLACK", DicomPrintOptions.DEF_BORDER_DENSITY}));
+            new JComboBox<>(
+                    new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("color")));
     add(borderDensityComboBox);
 
     //    add(new JLabel(Messages.getString("DicomPrintDialog.min_density") + StringUtil.COLON),
@@ -163,15 +149,14 @@ public class DicomPrintOptionPane extends JPanel {
         new JLabel(Messages.getString("DicomPrintDialog.trim") + StringUtil.COLON),
         GuiUtils.NEWLINE);
     trimComboBox =
-        new JComboBox<>(
-            new DefaultComboBoxModel<>(new String[] {DicomPrintOptions.DEF_TRIM, "YES"}));
+            new JComboBox<>(
+                    new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("whether")));
     add(trimComboBox);
 
     add(new JLabel(Messages.getString("DicomPrintDialog.empty_density") + StringUtil.COLON));
     comboBoxEmpty =
-        new JComboBox<>(
-            new DefaultComboBoxModel<>(
-                new String[] {DicomPrintOptions.DEF_EMPTY_DENSITY, "WHITE"}));
+            new JComboBox<>(
+                    new DefaultComboBoxModel<>(SelectOptionManager.GetSelectOptions("color")));
     add(comboBoxEmpty);
 
     printAnnotationsCheckBox = new JCheckBox(Messages.getString("PrintDialog.annotate"));

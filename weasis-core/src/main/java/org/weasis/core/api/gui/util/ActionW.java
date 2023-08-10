@@ -47,6 +47,19 @@ public class ActionW {
           KeyEvent.VK_Z,
           0,
           Feature.getSvgCursor("zoom.svg", Messages.getString("ActionW.zoom"), 0.5f, 0.5f));
+
+  /**
+   * 打印相关菜单功能 sle
+   * 2023年4月20日11:51:45
+   */
+  public static final SliderChangeListenerValue PRINT =
+          new SliderChangeListenerValue(
+                  Messages.getString("ActionW.print"),
+                  "print", // NON-NLS
+                  KeyEvent.VK_P,
+                  0,
+                  null);
+
   public static final SliderCineListenerValue SCROLL_SERIES =
       new SliderCineListenerValue(
           Messages.getString("ActionW.scroll"),

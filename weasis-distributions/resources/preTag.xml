@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- 预设标签 sle 2023年6月1日14:59:47 -->
+<Tags>
+  <tag keyword="PatientID" format="影像号"/>
+  <tag keyword="AccessionNumber" format="检查号"/>
+  <tag keyword="PatientName" format="姓名"/>
+  <tag keyword="PatientSex" format="性别"/>
+  <tag keyword="PatientAge" format="年龄"/>
+  <tag keyword="PatientWeight" format="体重"/>
+  <tag keyword="StudyDate" format="检查日期"/>
+  <tag keyword="StudyTime" format="检查时间"/>
+  <tag keyword="PatientBirthDate" format="出生日期"/>
+  <tag keyword="Exposure" format="曝光剂量"/>
+  <tag keyword="InstanceNumber" format="图像序号"/>
+  <tag keyword="Manufacturer" format="制造商"/>
+  <tag keyword="SeriesDescription" format="序列描述"/>
+  <tag keyword="InstitutionName" format="医院名"/>
+  <tag keyword="SeriesDate" format="序列生成日期"/>
+  <tag keyword="SeriesTime" format="序列生成时间"/>
+  <tag keyword="SliceThickness" format="切片厚度"/>
+  <tag keyword="SliceLocation" format="切片窗位"/>
+  <tag keyword="Kvp" format="电压"/>
+  <tag keyword="PatientOrientation" format="图像方位描述"/>
+  <tag keyword="RepetitionTime" format="重复时间"/>
+  <tag keyword="EchoTime" format="回波时间"/>
+  <tag keyword="StudyID" format="检查ID"/>
+  <tag keyword="AcquisitionDate" format="采集日期"/>
+  <tag keyword="AcquisitionTime" format="采集时间"/>
+  <tag keyword="SeriesNumber" format="序列号"/>
+</Tags>

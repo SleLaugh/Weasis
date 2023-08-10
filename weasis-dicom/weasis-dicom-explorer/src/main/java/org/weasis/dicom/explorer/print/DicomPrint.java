@@ -93,8 +93,8 @@ public class DicomPrint {
 
     if (g2d != null) {
       Color borderColor =
-          "WHITE".equals(printOptions.getBorderDensity()) ? Color.WHITE : Color.BLACK;
-      Color background = "WHITE".equals(printOptions.getEmptyDensity()) ? Color.WHITE : Color.BLACK;
+          "WHITE".equals(printOptions.getBorderDensity(true)) ? Color.WHITE : Color.BLACK;
+      Color background = "WHITE".equals(printOptions.getEmptyDensity(true)) ? Color.WHITE : Color.BLACK;
       g2d.setBackground(background);
       if (!Color.BLACK.equals(background)) {
         // Change background color
@@ -163,13 +163,13 @@ public class DicomPrint {
     int width = filmSize.getWidth(dpi);
     int height = filmSize.getHeight(dpi);
 
-    if ("LANDSCAPE".equals(printOptions.getFilmOrientation())) {
+    if ("LANDSCAPE".equals(printOptions.getFilmOrientation(true))) {
       int tmp = width;
       width = height;
       height = tmp;
     }
 
-    String mType = printOptions.getMagnificationType();
+    String mType = printOptions.getMagnificationType(true);
     interpolation = Interpolation.BILINEAR;
 
     if ("REPLICATE".equals(mType)) {
@@ -311,15 +311,15 @@ public class DicomPrint {
     device.setScheduledExecutor(Executors.newSingleThreadScheduledExecutor());
 
     filmSessionAttrs.setInt(Tag.NumberOfCopies, VR.IS, printOptions.getNumOfCopies());
-    filmSessionAttrs.setString(Tag.PrintPriority, VR.CS, printOptions.getPriority());
-    filmSessionAttrs.setString(Tag.MediumType, VR.CS, printOptions.getMediumType());
-    filmSessionAttrs.setString(Tag.FilmDestination, VR.CS, printOptions.getFilmDestination());
+    filmSessionAttrs.setString(Tag.PrintPriority, VR.CS, printOptions.getPriority(true));
+    filmSessionAttrs.setString(Tag.MediumType, VR.CS, printOptions.getMediumType(true));
+    filmSessionAttrs.setString(Tag.FilmDestination, VR.CS, printOptions.getFilmDestination(true));
     filmBoxAttrs.setString(Tag.FilmSizeID, VR.CS, printOptions.getFilmSizeId().toString());
-    filmBoxAttrs.setString(Tag.FilmOrientation, VR.CS, printOptions.getFilmOrientation());
-    filmBoxAttrs.setString(Tag.MagnificationType, VR.CS, printOptions.getMagnificationType());
-    filmBoxAttrs.setString(Tag.SmoothingType, VR.CS, printOptions.getSmoothingType());
-    filmBoxAttrs.setString(Tag.Trim, VR.CS, printOptions.getTrim());
-    filmBoxAttrs.setString(Tag.BorderDensity, VR.CS, printOptions.getBorderDensity());
+    filmBoxAttrs.setString(Tag.FilmOrientation, VR.CS, printOptions.getFilmOrientation(true));
+    filmBoxAttrs.setString(Tag.MagnificationType, VR.CS, printOptions.getMagnificationType(true));
+    filmBoxAttrs.setString(Tag.SmoothingType, VR.CS, printOptions.getSmoothingType(true));
+    filmBoxAttrs.setString(Tag.Trim, VR.CS, printOptions.getTrim(true));
+    filmBoxAttrs.setString(Tag.BorderDensity, VR.CS, printOptions.getBorderDensity(true));
     filmBoxAttrs.setInt(Tag.MinDensity, VR.US, printOptions.getMinDensity());
     filmBoxAttrs.setInt(Tag.MaxDensity, VR.US, printOptions.getMaxDensity());
     filmBoxAttrs.setString(Tag.ImageDisplayFormat, VR.ST, printOptions.getImageDisplayFormat());

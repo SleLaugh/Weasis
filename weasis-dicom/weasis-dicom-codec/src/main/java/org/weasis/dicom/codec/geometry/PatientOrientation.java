@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.weasis.core.api.media.data.TagReadable;
 import org.weasis.core.util.StringUtil;
+import org.weasis.dicom.codec.Messages;
 import org.weasis.dicom.codec.TagD;
 
 /**
@@ -31,12 +32,12 @@ public class PatientOrientation {
   public static final Color green = new Color(897355);
 
   public enum Biped implements Orientation {
-    R("Right", blue), // NON-NLS
-    L("Left", blue), // NON-NLS
-    A("Anterior", red), // NON-NLS
-    P("Posterior", red), // NON-NLS
-    F("Foot", green), // NON-NLS
-    H("Head", green); // NON-NLS
+    R(Messages.getString("Biped.right"), blue), // NON-NLS
+    L(Messages.getString("Biped.left"), blue), // NON-NLS
+    A(Messages.getString("Biped.anterior"), red), // NON-NLS
+    P(Messages.getString("Biped.posterior"), red), // NON-NLS
+    F(Messages.getString("Biped.foot"), green), // NON-NLS
+    H(Messages.getString("Biped.head"), green); // NON-NLS
 
     private final String fullName;
     private final Color color;
@@ -74,12 +75,12 @@ public class PatientOrientation {
   }
 
   public enum Quadruped implements Orientation {
-    RT("Right", blue), // NON-NLS
-    LE("Left", blue), // NON-NLS
-    V("Ventral", red), // NON-NLS
-    D("Dorsal", red), // NON-NLS
-    CD("Caudal", green), // NON-NLS
-    CR("Cranial", green); // NON-NLS
+    RT(Messages.getString("Quadruped.right"), blue),
+    LE(Messages.getString("Quadruped.left"), blue),
+    V(Messages.getString("Quadruped.ventral"), red),
+    D(Messages.getString("Quadruped.dorsal"), red),
+    CD(Messages.getString("Quadruped.caudal"), green),
+    CR(Messages.getString("Quadruped.cranial"), green);
 
     private final String fullName;
     private final Color color;

@@ -45,11 +45,11 @@ public class MprPrefView extends AbstractItemDialogPage {
 
   private void initGUI() {
     EventManager eventManager = EventManager.getInstance();
-    JLabel lblMode = new JLabel("Auto center axes" + StringUtil.COLON);
+    JLabel lblMode = new JLabel(Messages.getString("morPref.auto_center_axes") + StringUtil.COLON);
 
-    comboBox3DCursorMode.addItem("Never");
-    comboBox3DCursorMode.addItem("Only when the center is hidden");
-    comboBox3DCursorMode.addItem("Always");
+    comboBox3DCursorMode.addItem(Messages.getString("morPref.never"));
+    comboBox3DCursorMode.addItem(Messages.getString("morPref.center_is_hidden"));
+    comboBox3DCursorMode.addItem(Messages.getString("morPref.always"));
 
     int mode = eventManager.getOptions().getIntProperty(View2d.P_CROSSHAIR_MODE, 1);
     if (mode < 0 && mode >= comboBox3DCursorMode.getModel().getSize()) {
@@ -69,7 +69,7 @@ public class MprPrefView extends AbstractItemDialogPage {
     add(panel1);
     add(GuiUtils.boxVerticalStrut(ITEM_SEPARATOR));
 
-    JLabel labelGapSize = new JLabel("Crosshair gap at the center" + StringUtil.COLON); // NON-NLS
+    JLabel labelGapSize = new JLabel(Messages.getString("morPref.crosshair_gap_center") + StringUtil.COLON); // NON-NLS
     int gapSize = eventManager.getOptions().getIntProperty(View2d.P_CROSSHAIR_CENTER_GAP, 40);
     spinnerCrossGapSize.setValue(gapSize);
     add(

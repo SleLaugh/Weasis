@@ -3,6 +3,52 @@
 	The "DEFAULT" modality configuration will be applied on all the modalities 
 	without configuration (or unknown) -->
 <modalities>
+  <modality name="DEFAULT">
+    <splittingTags>
+      <SeriesInstanceUID/>
+    </splittingTags>
+  </modality>
+  <modality name="AU" extend="DEFAULT"/>
+  <modality name="BI" extend="DEFAULT"/>
+  <modality name="CD" extend="DEFAULT"/>
+  <modality name="DD" extend="DEFAULT"/>
+  <modality name="DG" extend="DEFAULT"/>
+  <modality name="CR" extend="DEFAULT"/>
+  <modality name="CT" extend="DEFAULT"/>
+  <modality name="DX" extend="DEFAULT"/>
+  <modality name="ECG" extend="DEFAULT"/>
+  <modality name="EPS" extend="DEFAULT"/>
+  <modality name="ES" extend="DEFAULT"/>
+  <modality name="GM" extend="DEFAULT"/>
+  <modality name="HC" extend="DEFAULT"/>
+  <modality name="HD" extend="DEFAULT"/>
+  <modality name="IO" extend="DEFAULT"/>
+  <modality name="IVUS" extend="DEFAULT"/>
+  <modality name="LS" extend="DEFAULT"/>
+  <modality name="MG" extend="DEFAULT"/>
+  <modality name="MR" extend="DEFAULT"/>
+  <modality name="NM" extend="DEFAULT"/>
+  <modality name="OT" extend="DEFAULT"/>
+  <modality name="OP" extend="DEFAULT"/>
+  <modality name="PR" extend="DEFAULT"/>
+  <modality name="PX" extend="DEFAULT"/>
+  <modality name="PT" extend="DEFAULT"/>
+  <modality name="RF" extend="DEFAULT"/>
+  <modality name="RG" extend="DEFAULT"/>
+  <modality name="RTDOSE" extend="DEFAULT"/>
+  <modality name="RTIMAGE" extend="DEFAULT"/>
+  <modality name="RTPLAN" extend="DEFAULT"/>
+  <modality name="RTRECORD" extend="DEFAULT"/>
+  <modality name="RTSTRUCT" extend="DEFAULT"/>
+  <modality name="SC" extend="DEFAULT"/>
+  <modality name="SM" extend="DEFAULT"/>
+  <modality name="SMR" extend="DEFAULT"/>
+  <modality name="SR" extend="DEFAULT"/>
+  <modality name="ST" extend="DEFAULT"/>
+  <modality name="TG" extend="DEFAULT"/>
+  <modality name="US" extend="DEFAULT"/>
+  <modality name="XA" extend="DEFAULT"/>
+  <modality name="XC" extend="DEFAULT"/>
   <!-- <modality> attributes: name is a mandatory attribute, extend is optional. -->
   <!-- the "extend" attribute allows to inherit the values of a previous declared
     modality (must be declared before in the xml file) -->

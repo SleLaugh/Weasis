@@ -9,30 +9,32 @@
  */
 package org.weasis.core.api.util;
 
+import org.weasis.core.Messages;
 import java.awt.Font;
 import javax.swing.UIManager;
 
 public enum FontItem {
-  H1_SEMIBOLD("h1.font", "H1 semibold"), // NON-NLS
-  H1("h1.regular.font", "H1"), // NON-NLS
-  H2_SEMIBOLD("h2.font", "H2 semibold"), // NON-NLS
-  H2("h2.regular.font", "H2"), // NON-NLS
-  H3_SEMIBOLD("h3.font", "H3 semibold"), // NON-NLS
-  H3("h3.regular.font", "H3"), // NON-NLS
-  LARGE("large.font", "Large"), // NON-NLS
-  DEFAULT_BOLD("h4.font", "H4 (default bold)"), // NON-NLS
-  DEFAULT_SEMIBOLD("semibold.font", "Default semibold"), // NON-NLS
-  DEFAULT("defaultFont", "Default font"), // NON-NLS
-  DEFAULT_LIGHT("light.font", "Default light font"), // NON-NLS
-  MONOSPACED("monospaced.font", "Default monospaced font"), // NON-NLS
-  MEDIUM_SEMIBOLD("medium.semibold.font", "Medium semibold"), // NON-NLS
-  MEDIUM("medium.font", "Medium"), // NON-NLS
-  SMALL_SEMIBOLD("small.semibold.font", "Small semibold"), // NON-NLS
-  SMALL("small.font", "Small"), // NON-NLS
-  MINI_SEMIBOLD("mini.semibold.font", "Mini semibold"), // NON-NLS
-  MINI("mini.font", "Mini"), // NON-NLS
-  MICRO_SEMIBOLD("micro.semibold.font", "Micro semibold"), // NON-NLS
-  MICRO("micro.font", "Micro"); // NON-NLS
+  H1_SEMIBOLD("h1.font",Messages.getString("Font.h1_semibold")),
+  H1("h1.regular.font", Messages.getString("Font.h1")),
+  H2_SEMIBOLD("h2.font", Messages.getString("Font.h2_semibold")),
+  H2("h2.regular.font", Messages.getString("Font.h2")),
+  H3_SEMIBOLD("h3.font", Messages.getString("Font.h3_semibold")),
+  H3("h3.regular.font", Messages.getString("Font.h3")),
+  LARGE("large.font", Messages.getString("Font.large")),
+  DEFAULT_BOLD("h4.font", Messages.getString("Font.default_bold")),
+  DEFAULT_SEMIBOLD("semibold.font", Messages.getString("Font.default_semibold")),
+  DEFAULT("defaultFont", Messages.getString("Font.default")),
+  DEFAULT_LIGHT("light.font", Messages.getString("Font.default_light")),
+  MONOSPACED("monospaced.font", Messages.getString("Font.monospaced")),
+  MEDIUM_SEMIBOLD("medium.semibold.font", Messages.getString("Font.medium_semibold")),
+  MEDIUM("medium.font", Messages.getString("Font.medium")),
+  SMALL_SEMIBOLD("small.semibold.font", Messages.getString("Font.small_semibold")),
+  SMALL("small.font", Messages.getString("Font.small")),
+  MINI_SEMIBOLD("mini.semibold.font", Messages.getString("Font.mini_semibold")),
+  MINI("mini.font", Messages.getString("Font.mini")),
+  MICRO_SEMIBOLD("micro.semibold.font", Messages.getString("Font.micro_semibold")),
+  MICRO("micro.font", Messages.getString("Font.micro"));
+
 
   private final String key;
   private final String name;
