@@ -64,7 +64,17 @@ public abstract class AbstractItemDialogPage extends JPanel implements PageItem,
   }
 
   public void addSubPage(PageItem subPage, ActionListener actionListener, JComponent menuPanel) {
-    subPageList.add(subPage);
+    // 设置页签添加循环，判断添加到哪一行，因为现在直接add进去顺序是有问题的，所以使用position的大小来控制位置 sle 2023年8月11日10:31:13
+    int insertIndex = subPageList.size();
+    int position = ((AbstractItemDialogPage) subPage).getComponentPosition();
+    for (int i = 0; i < subPageList.size(); i++) {
+      AbstractItemDialogPage item = (AbstractItemDialogPage) subPageList.get(i);
+      if (item.getComponentPosition() > position) {
+        insertIndex = i;
+        break;
+      }
+    }
+    subPageList.add(insertIndex, subPage);
     if (actionListener != null && menuPanel != null) {
       JButton button = new JButton();
       button.putClientProperty("JButton.buttonType", "roundRect");

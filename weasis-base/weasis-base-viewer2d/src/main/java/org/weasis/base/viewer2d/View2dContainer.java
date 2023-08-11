@@ -82,7 +82,7 @@ public class View2dContainer extends ImageViewerPlugin<ImageElement>
 
   // Unmodifiable list of the default synchronization elements
   public static final List<SynchView> DEFAULT_SYNCH_LIST =
-      List.of(SynchView.NONE, SynchView.DEFAULT_STACK, SynchView.DEFAULT_TILE);
+      List.of(SynchView.NONE, SynchView.DEFAULT_STACK, SynchView.DEFAULT_TILE); // 修改默认同步方式 sle 2023年8月11日09:27:37
 
   public static final GridBagLayoutModel VIEWS_2x1_r1xc2_histo =
       new GridBagLayoutModel(
@@ -90,7 +90,7 @@ public class View2dContainer extends ImageViewerPlugin<ImageElement>
           "layout_histo", // NON-NLS
           Messages.getString("View2dContainer.histogram"));
   // Unmodifiable list of the default layout elements
-  public static final List<GridBagLayoutModel> DEFAULT_LAYOUT_LIST = InitLayoutList();
+  public static final List<GridBagLayoutModel> DEFAULT_LAYOUT_LIST = InitLayoutList(); // 布局列表封装成方法 sle 2023年8月11日09:58:01
 
   // Static tools shared by all the View2dContainer instances, tools are registered when a container
   // is selected
@@ -113,7 +113,7 @@ public class View2dContainer extends ImageViewerPlugin<ImageElement>
         ViewerFactory.NAME,
         ResourceUtil.getIcon(OtherIcon.RASTER_IMAGE),
         null);
-    setSynchView(SynchView.DEFAULT_STACK);
+    setSynchView(SynchView.DEFAULT_TILE); // 修改默认同步方式 sle 2023年8月11日09:27:37
     addComponentListener(
         new ComponentAdapter() {
 
@@ -143,19 +143,23 @@ public class View2dContainer extends ImageViewerPlugin<ImageElement>
       String componentName = InsertableUtil.getCName(this.getClass());
       String key = "enable"; // NON-NLS
 
-      if (InsertableUtil.getBooleanProperty(
-          BundleTools.SYSTEM_PREFERENCES,
-          bundleName,
-          componentName,
-          InsertableUtil.getCName(ImportToolBar.class),
-          key,
-          true)) {
-        Optional<Toolbar> b =
-            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
-                .filter(ImportToolBar.class::isInstance)
-                .findFirst();
-        b.ifPresent(TOOLBARS::add);
-      }
+      /**
+       * 隐藏DICOM导入 --2D查看器 sle
+       * 2023年8月11日10:59:36
+       */
+//      if (InsertableUtil.getBooleanProperty(
+//          BundleTools.SYSTEM_PREFERENCES,
+//          bundleName,
+//          componentName,
+//          InsertableUtil.getCName(ImportToolBar.class),
+//          key,
+//          true)) {
+//        Optional<Toolbar> b =
+//            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
+//                .filter(ImportToolBar.class::isInstance)
+//                .findFirst();
+//        b.ifPresent(TOOLBARS::add);
+//      }
       if (InsertableUtil.getBooleanProperty(
           BundleTools.SYSTEM_PREFERENCES,
           bundleName,

@@ -114,11 +114,16 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
     return layer;
   }
 
+  /**
+   * 画板渲染 sle
+   * 2023年5月5日18:27:23
+   * @param g2
+   */
   @Override
   public void paint(Graphics2D g2) {
-    DicomImageElement image = view2DPane.getImage();
-    FontMetrics fontMetrics = g2.getFontMetrics();
-    final Rectangle bound = view2DPane.getJComponent().getBounds();
+    DicomImageElement image = view2DPane.getImage(); // 影像图片
+    FontMetrics fontMetrics = g2.getFontMetrics(); // 字体
+    final Rectangle bound = view2DPane.getJComponent().getBounds(); // 当前块大小
     int minSize = fontMetrics.stringWidth(Messages.getString("InfoLayer.msg_outside_levels")) * 2;
     if (!visible || image == null || minSize > bound.width || minSize > bound.height) {
       return;
@@ -127,50 +132,65 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
     Object[] oldRenderingHints =
         GuiUtils.setRenderingHints(g2, true, false, view2DPane.requiredTextAntialiasing());
 
-    OpManager disOp = view2DPane.getDisplayOpManager();
+    OpManager disOp = view2DPane.getDisplayOpManager(); // 当前操作名称
     Modality mod =
-        Modality.getModality(TagD.getTagValue(view2DPane.getSeries(), Tag.Modality, String.class));
-    ModalityInfoData modality = ModalityView.getModlatityInfos(mod);
+        Modality.getModality(TagD.getTagValue(view2DPane.getSeries(), Tag.Modality, String.class)); // 检查类型
+    ModalityInfoData modality = ModalityView.getModlatityInfos(mod); // 获取检查类型的四角信息
 
-    float midX = bound.width / 2f;
-    float midY = bound.height / 2f;
-    final int fontHeight = fontMetrics.getHeight();
-    thickLength = Math.max(fontHeight, GuiUtils.getScaleLength(5.0));
+    final float minY = border; // 最上方Y轴
+    final float midY = bound.height / 2f;// 竖轴的中间位置
+    final float maxY = bound.height - border; // 最下方Y轴
+    final float minX = border; // 起始宽度
+    final float midX = bound.width / 2f;// 横轴的中间位置
+    final float maxX = bound.width - border; // 结束宽度
+    final Color errorColor = IconColor.ACTIONS_RED.getColor(); // 错误字体颜色
+    final int fontHeight = fontMetrics.getHeight();// 字体高度
+    final int midFontHeight = fontHeight - fontMetrics.getDescent();// 最小字体高度
+    thickLength = Math.max(fontHeight, GuiUtils.getScaleLength(5.0));// 比例尺的宽度
+
+    float drawY ; // -1.5 for outline 接下来要控制的元素高度
+    float drawX ;// 截下来要控制的元素宽度
 
     g2.setPaint(Color.BLACK);
 
-    boolean hideMin = !getDisplayPreferences(LayerItem.MIN_ANNOTATIONS);
-    final int midFontHeight = fontHeight - fontMetrics.getDescent();
-    float drawY = bound.height - border - GuiUtils.getScaleLength(1.5f); // -1.5 for outline
+    boolean fullAnnotations = !getDisplayPreferences(LayerItem.MIN_ANNOTATIONS);// 完整批注(未勾选精简批注)
 
+    // 读取影像失败时的显示
     if (!image.isReadable()) {
       paintNotReadable(g2, image, midX, midY, fontHeight);
     }
 
+    // 读取影像成功时，并且源影像不为空时的渲染内容
     if (image.isReadable() && view2DPane.getSourceImage() != null) {
+      // 比例
       if (getDisplayPreferences(LayerItem.SCALE)) {
-        PlanarImage source = image.getImage();
+        PlanarImage source = image.getImage(); // 源影像
         if (source != null) {
           ImageProperties props =
               new ImageProperties(
-                  source.width(),
-                  source.height(),
-                  image.getPixelSize(),
-                  image.getRescaleX(),
-                  image.getRescaleY(),
-                  image.getPixelSpacingUnit(),
-                  image.getPixelSizeCalibrationDescription());
-          drawScale(g2, bound, fontHeight, props);
+                  source.width(),// 源影像宽
+                  source.height(),// 源影像高
+                  image.getPixelSize(),// 像素大小
+                  image.getRescaleX(),// x轴缩放比例
+                  image.getRescaleY(),// y轴缩放比例
+                  image.getPixelSpacingUnit(),// 长度单位
+                  image.getPixelSizeCalibrationDescription());// 像素尺寸校准描述
+          drawScale(g2, bound, fontHeight, props);// 设置当前块的比例
         }
       }
-      if (getDisplayPreferences(LayerItem.LUT) && hideMin) {
-        drawLUT(g2, bound, midFontHeight);
+      // LUT
+      if (getDisplayPreferences(LayerItem.LUT) && fullAnnotations) {
+        drawLUT(g2, bound, midFontHeight);// 设置当前块的LUT
       }
     }
 
-    drawY -= fontHeight;
+    // 左下角
+    drawY = maxY - GuiUtils.getScaleLength(1.5f) - fontHeight;// 左下角的高度为底部高度，并且减去一行文本高度
+
+    // 有损压缩的情况
     drawY = checkAndPaintLossyImage(g2, image, drawY, fontHeight, border);
 
+    // 暂时不知道是干什么的
     Integer frame = TagD.getTagValue(image, Tag.InstanceNumber, Integer.class);
     RejectedKOSpecialElement koElement =
         DicomModel.getRejectionKoSpecialElement(
@@ -180,15 +200,12 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
 
     if (koElement != null) {
       String message = "Not a valid image: " + koElement.getDocumentTitle(); // NON-NLS
-      FontTools.paintColorFontOutline(
-          g2,
-          message,
-          midX - g2.getFontMetrics().stringWidth(message) / 2F,
-          midY,
-          IconColor.ACTIONS_RED.getColor());
+      drawX = midX - g2.getFontMetrics().stringWidth(message) / 2F;
+      FontTools.paintColorFontOutline(g2, message, drawX, midY, errorColor); // 块中央
     }
 
-    if (getDisplayPreferences(LayerItem.PIXEL) && hideMin) {
+    // 像素
+    if (getDisplayPreferences(LayerItem.PIXEL) && fullAnnotations) {
       StringBuilder sb = new StringBuilder(Messages.getString("InfoLayer.pixel"));
       sb.append(StringUtil.COLON_AND_SPACE);
       if (pixelInfo != null) {
@@ -197,19 +214,17 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
         sb.append(pixelInfo.getPixelPositionText());
       }
       String str = sb.toString();
-      FontTools.paintFontOutline(g2, str, border, drawY);
+      FontTools.paintFontOutline(g2, str, minX, drawY); // 块左下方
+      drawX = fontMetrics.stringWidth(str) + GuiUtils.getScaleLength(2);
       drawY -= fontHeight;
-      pixelInfoBound.setBounds(
-          border,
-          (int) drawY + fontMetrics.getDescent(),
-          fontMetrics.stringWidth(str) + GuiUtils.getScaleLength(2),
-          fontHeight);
+      pixelInfoBound.setBounds((int) minX, (int) drawY + fontMetrics.getDescent(), (int) drawX , fontHeight);
     }
-    if (getDisplayPreferences(LayerItem.WINDOW_LEVEL) && hideMin) {
+    // 窗宽窗位（预设）
+    if (getDisplayPreferences(LayerItem.WINDOW_LEVEL) && fullAnnotations) {
       StringBuilder sb = new StringBuilder();
-      Number window = (Number) disOp.getParamValue(WindowOp.OP_NAME, ActionW.WINDOW.cmd());
-      Number level = (Number) disOp.getParamValue(WindowOp.OP_NAME, ActionW.LEVEL.cmd());
-      boolean outside = false;
+      Number window = (Number) disOp.getParamValue(WindowOp.OP_NAME, ActionW.WINDOW.cmd()); // 窗宽
+      Number level = (Number) disOp.getParamValue(WindowOp.OP_NAME, ActionW.LEVEL.cmd()); // 窗位
+      boolean outside = false; // 是否是图像光谱之外的值
       if (window != null && level != null) {
         sb.append(ActionW.WINLEVEL.getTitle());
         sb.append(StringUtil.COLON_AND_SPACE);
@@ -226,46 +241,49 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
         double maxModLUT = image.getMaxValue(wlp);
         double minp = level.doubleValue() - window.doubleValue() / 2.0;
         double maxp = level.doubleValue() + window.doubleValue() / 2.0;
+        // 判断是否超出了光谱
         if (minp > maxModLUT || maxp < minModLUT) {
           outside = true;
           sb.append(" - ");
           sb.append(Messages.getString("InfoLayer.msg_outside_levels"));
         }
       }
+      // 如果超出图像光谱，则渲染为error红色语句
       if (outside) {
-        FontTools.paintColorFontOutline(
-            g2, sb.toString(), border, drawY, IconColor.ACTIONS_RED.getColor());
+        FontTools.paintColorFontOutline(g2, sb.toString(), minX, drawY, errorColor);// 块左下方
       } else {
-        FontTools.paintFontOutline(g2, sb.toString(), border, drawY);
+        FontTools.paintFontOutline(g2, sb.toString(), minX, drawY);// 块左下方
       }
       drawY -= fontHeight;
     }
-    if (getDisplayPreferences(LayerItem.ZOOM) && hideMin) {
+    // 缩放
+    if (getDisplayPreferences(LayerItem.ZOOM) && fullAnnotations) {
       FontTools.paintFontOutline(
           g2,
           Messages.getString("InfoLayer.zoom")
               + StringUtil.COLON_AND_SPACE
               + DecFormatter.percentTwoDecimal(view2DPane.getViewModel().getViewScale()),
-          border,
-          drawY);
+              minX,
+          drawY);// 块左下方
       drawY -= fontHeight;
     }
-    if (getDisplayPreferences(LayerItem.ROTATION) && hideMin) {
+    // 角度
+    if (getDisplayPreferences(LayerItem.ROTATION) && fullAnnotations) {
       FontTools.paintFontOutline(
           g2,
           Messages.getString("InfoLayer.angle")
               + StringUtil.COLON_AND_SPACE
               + view2DPane.getActionValue(ActionW.ROTATION.cmd())
               + " °",
-          border,
-          drawY);
+              minX,
+          drawY);// 块左下方
       drawY -= fontHeight;
     }
-
-    if (getDisplayPreferences(LayerItem.FRAME) && hideMin) {
+    // 帧号
+    if (getDisplayPreferences(LayerItem.FRAME) && fullAnnotations) {
       StringBuilder buf = new StringBuilder(Messages.getString("InfoLayer.frame"));
       buf.append(StringUtil.COLON_AND_SPACE);
-      Integer inst = TagD.getTagValue(image, Tag.InstanceNumber, Integer.class);
+      Integer inst = TagD.getTagValue(image, Tag.InstanceNumber, Integer.class); // 当前帧号
       if (inst != null) {
         buf.append("[");
         buf.append(inst);
@@ -278,39 +296,77 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
               .getSeries()
               .size(
                   (Filter<DicomImageElement>)
-                      view2DPane.getActionValue(ActionW.FILTERED_SERIES.cmd())));
-      FontTools.paintFontOutline(g2, buf.toString(), border, drawY);
+                      view2DPane.getActionValue(ActionW.FILTERED_SERIES.cmd()))); // 总帧数
+      FontTools.paintFontOutline(g2, buf.toString(), minX, drawY); // 块左下方
       drawY -= fontHeight;
 
-      Double imgProgression = (Double) view2DPane.getActionValue(ActionW.PROGRESSION.cmd());
+      Double imgProgression = (Double) view2DPane.getActionValue(ActionW.PROGRESSION.cmd()); // 暂时不知道是干什么的
       if (imgProgression != null) {
         int inset = GuiUtils.getScaleLength(13);
         drawY -= inset;
         int pColor = (int) (510 * imgProgression);
         g2.setPaint(new Color(Math.min(510 - pColor, 255), Math.min(pColor, 255), 0));
-        g2.fillOval(border, (int) drawY, inset, inset);
+        g2.fillOval((int) minX, (int) drawY, inset, inset);
       }
     }
-    Point2D.Float[] positions = new Point2D.Float[4];
-    positions[3] = new Point2D.Float(border, drawY - GuiUtils.getScaleLength(5));
+    
+    Point2D.Float[] positions = new Point2D.Float[4]; // 遵循左上[0]，右上[1]，右下[2]，左下[3]的原则
+    Series series = (Series) view2DPane.getSeries();
+    MediaSeriesGroup study = getParent(series, DicomModel.study);
+    MediaSeriesGroup patient = getParent(series, DicomModel.patient);
+    CornerInfoData corner;
+    TagView[] infos;
 
+    corner = modality.getCornerInfo(CornerDisplay.BOTTOM_LEFT);// 获取左下角方位
+    infos = corner.getInfos();// 获取需要渲染的四角信息
+    Boolean leftAnnotations = infos.length > 0 && fullAnnotations; // 是否渲染左下角批注(存在左下角的自定义批注并且渲染完整批注)
+    // 如果不渲染左下角批注的话，则需要添加position
+    if (!leftAnnotations){
+      positions[3] = new Point2D.Float(minX, drawY - GuiUtils.getScaleLength(5));
+    }
+
+    // 批注
     if (getDisplayPreferences(LayerItem.ANNOTATIONS)) {
-      Series series = (Series) view2DPane.getSeries();
-      MediaSeriesGroup study = getParent(series, DicomModel.study);
-      MediaSeriesGroup patient = getParent(series, DicomModel.patient);
-      CornerInfoData corner = modality.getCornerInfo(CornerDisplay.TOP_LEFT);
       boolean anonymize = getDisplayPreferences(LayerItem.ANONYM_ANNOTATIONS);
-      drawY = fontHeight;
-      TagView[] infos = corner.getInfos();
+      
+      // 如果左下角存在自定义批注，则渲染左下角的
+      if (leftAnnotations) {
+        drawY -= fontHeight;
+        TagView[] orderDescInfos = OrderDesc(infos);
+        for (TagView info : orderDescInfos) {
+          if (info != null) {
+            for (TagW tag : info.getTag()) {
+              if (!anonymize || tag.getAnonymizationType() != 1) {
+                Object value = getTagValue(tag, patient, study, series, image);
+                if (value != null) {
+                  String str = tag.getFormattedTagValue(value, info.getFormat());
+                  if (StringUtil.hasText(str)) {
+                    FontTools.paintFontOutline(g2, str, minX, drawY);// 块左下方
+                    drawY -= fontHeight;
+                  }
+                  break;
+                }
+              }
+            }
+          }
+        }
+        //并且渲染完后需要添加到position中
+        positions[3] = new Point2D.Float(minX, drawY - GuiUtils.getScaleLength(5));
+      }
+
+      // 左上角
+      drawY = fontHeight; // 左上角的Y轴为最高处开始，也就是从0开始，默认加一行文本高度，然后每渲染一行加一行文本高度
+      corner = modality.getCornerInfo(CornerDisplay.TOP_LEFT);// 获取方位
+      infos = corner.getInfos(); // 获取需要渲染的四角信息
       for (TagView tagView : infos) {
-        if (tagView != null && (hideMin || tagView.containsTag(TagD.get(Tag.PatientName)))) {
+        if (tagView != null && (fullAnnotations || tagView.containsTag(TagD.get(Tag.PatientName)))) {
           for (TagW tag : tagView.getTag()) {
             if (!anonymize || tag.getAnonymizationType() != 1) {
               Object value = getTagValue(tag, patient, study, series, image);
               if (value != null) {
                 String str = tag.getFormattedTagValue(value, tagView.getFormat());
                 if (StringUtil.hasText(str)) {
-                  FontTools.paintFontOutline(g2, str, border, drawY);
+                  FontTools.paintFontOutline(g2, str, minX, drawY); // 块左上方
                   drawY += fontHeight;
                 }
                 break;
@@ -319,14 +375,15 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
           }
         }
       }
-      positions[0] = new Point2D.Float(border, drawY - fontHeight + GuiUtils.getScaleLength(5));
+      positions[0] = new Point2D.Float(minX, drawY - fontHeight + GuiUtils.getScaleLength(5));
 
-      corner = modality.getCornerInfo(CornerDisplay.TOP_RIGHT);
-      drawY = fontHeight;
-      infos = corner.getInfos();
+      // 右上角
+      drawY = fontHeight;// 右上角的Y轴为最高处开始，也就是从0开始，默认加一行文本高度，然后每渲染一行加一行文本高度
+      corner = modality.getCornerInfo(CornerDisplay.TOP_RIGHT);// 获取方位
+      infos = corner.getInfos();// 获取需要渲染的四角信息
       for (TagView info : infos) {
         if (info != null) {
-          if (hideMin || info.containsTag(TagD.get(Tag.SeriesDate))) {
+          if (fullAnnotations || info.containsTag(TagD.get(Tag.SeriesDate))) {
             Object value;
             for (TagW tag : info.getTag()) {
               if (!anonymize || tag.getAnonymizationType() != 1) {
@@ -334,11 +391,8 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
                 if (value != null) {
                   String str = tag.getFormattedTagValue(value, info.getFormat());
                   if (StringUtil.hasText(str)) {
-                    FontTools.paintFontOutline(
-                        g2,
-                        str,
-                        bound.width - g2.getFontMetrics().stringWidth(str) - (float) border,
-                        drawY);
+                    drawX = maxX - g2.getFontMetrics().stringWidth(str);
+                    FontTools.paintFontOutline( g2, str,  drawX, drawY); // 块右上方
                     drawY += fontHeight;
                   }
                   break;
@@ -348,28 +402,25 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
           }
         }
       }
-      positions[1] =
-          new Point2D.Float(
-              (float) bound.width - border, drawY - fontHeight + GuiUtils.getScaleLength(5));
+      positions[1] = new Point2D.Float(maxX, drawY - fontHeight + GuiUtils.getScaleLength(5));
 
-      drawY = bound.height - border - GuiUtils.getScaleLength(1.5f); // -1.5 for outline
-      if (hideMin) {
-        corner = modality.getCornerInfo(CornerDisplay.BOTTOM_RIGHT);
-        infos = corner.getInfos();
-        for (int j = infos.length - 1; j >= 0; j--) {
-          if (infos[j] != null) {
-            Object value;
-            for (TagW tag : infos[j].getTag()) {
+      // 右下角
+      drawY = maxY  - GuiUtils.getScaleLength(1.5f); // 右下角高度为底部高度
+      if (fullAnnotations) {
+        corner = modality.getCornerInfo(CornerDisplay.BOTTOM_RIGHT);// 获取方位
+        infos = corner.getInfos();// 获取需要渲染的四角信息
+        TagView[] orderDescInfos = OrderDesc(infos);
+        for (TagView info : orderDescInfos) {
+          if (info != null) {
+            for (TagW tag : info.getTag()) {
+              // 匿名化判断
               if (!anonymize || tag.getAnonymizationType() != 1) {
-                value = getTagValue(tag, patient, study, series, image);
+                Object value = getTagValue(tag, patient, study, series, image);
                 if (value != null) {
-                  String str = tag.getFormattedTagValue(value, infos[j].getFormat());
+                  String str = tag.getFormattedTagValue(value, info.getFormat());
                   if (StringUtil.hasText(str)) {
-                    FontTools.paintFontOutline(
-                        g2,
-                        str,
-                        bound.width - g2.getFontMetrics().stringWidth(str) - (float) border,
-                        drawY);
+                    drawX = maxX - g2.getFontMetrics().stringWidth(str);
+                    FontTools.paintFontOutline(g2, str, drawX, drawY);// 块右下方
                     drawY -= fontHeight;
                   }
                   break;
@@ -379,20 +430,20 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
           }
         }
         drawY -= 5;
-        drawSeriesInMemoryState(g2, view2DPane.getSeries(), bound.width - border, (int) (drawY));
+        drawSeriesInMemoryState(g2, view2DPane.getSeries(), (int) maxX, (int) drawY);
       }
-      positions[2] =
-          new Point2D.Float((float) bound.width - border, drawY - GuiUtils.getScaleLength(5));
+      positions[2] = new Point2D.Float(maxX, drawY - GuiUtils.getScaleLength(5));
 
       // Boolean synchLink = (Boolean) view2DPane.getActionValue(ActionW.SYNCH_LINK);
       // String str = synchLink != null && synchLink ? "linked" : "unlinked"; // NON-NLS
       // paintFontOutline(g2, str, bound.width - g2.getFontMetrics().stringWidth(str) - BORDER,
       // drawY);
 
-      Integer columns = TagD.getTagValue(image, Tag.Columns, Integer.class);
-      Integer rows = TagD.getTagValue(image, Tag.Rows, Integer.class);
-      StringBuilder orientation = new StringBuilder(mod.name());
-      Plan plan = null;
+      Integer columns = TagD.getTagValue(image, Tag.Columns, Integer.class);// 竖向像素尺寸
+      Integer rows = TagD.getTagValue(image, Tag.Rows, Integer.class);// 横向像素尺寸
+      StringBuilder orientation = new StringBuilder(mod.name());// 检查类型
+      Plan plan = null;//图像处理方式（影像是呈现x-y还是x-z平面方式展现）
+      // 图像尺寸的文本
       if (rows != null && columns != null) {
         orientation.append(" (");
         orientation.append(columns);
@@ -400,14 +451,17 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
         orientation.append(rows);
         orientation.append(")");
       }
-      String colLeft = null;
-      String rowTop = null;
+
+      // 定向
+      String colLeft = null;// 左边显示的方位
+      String rowTop = null; // 上方显示的方位
       boolean quadruped =
           "QUADRUPED"
               .equalsIgnoreCase(
                   TagD.getTagValue(series, Tag.AnatomicalOrientationType, String.class));
-      Vector3d vr = ImageOrientation.getRowImagePosition(image);
-      Vector3d vc = ImageOrientation.getColumnImagePosition(image);
+      Vector3d vr = ImageOrientation.getRowImagePosition(image); // 获取行方向的位置信息
+      Vector3d vc = ImageOrientation.getColumnImagePosition(image); // 获取列方向的位置信息
+      Integer rotationAngle = (Integer) view2DPane.getActionValue(ActionW.ROTATION.cmd()); // 旋转的角度
       if (getDisplayPreferences(LayerItem.IMAGE_ORIENTATION) && vr != null && vc != null) {
         orientation.append(" - ");
         plan = ImageOrientation.getPlan(vr, vc);
@@ -417,19 +471,21 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
         // Set the opposite vector direction (otherwise label should be placed in mid-right and
         // mid-bottom
 
-        Integer rotationAngle = (Integer) view2DPane.getActionValue(ActionW.ROTATION.cmd());
+        // 当前影像旋转后的逻辑
         if (rotationAngle != null && rotationAngle != 0) {
-          double rad = Math.toRadians(rotationAngle);
+          double rad = Math.toRadians(rotationAngle); // 将角度转化为弧度
           Vector3d normal = VectorUtils.computeNormalOfSurface(vr, vc);
           vr.negate();
           vr.rotateAxis(-rad, normal.x, normal.y, normal.z);
           vc.negate();
           vc.rotateAxis(-rad, normal.x, normal.y, normal.z);
-        } else {
+        }
+        // 当前影像未旋转
+        else {
           vr.negate();
           vc.negate();
         }
-
+        // 是否水平翻转
         if (LangUtil.getNULLtoFalse((Boolean) view2DPane.getActionValue((ActionW.FLIP.cmd())))) {
           vr.negate();
         }
@@ -438,10 +494,11 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
         rowTop = ImageOrientation.getOrientation(vc, quadruped);
 
       } else {
-        String[] po = TagD.getTagValue(image, Tag.PatientOrientation, String[].class);
-        Integer rotationAngle = (Integer) view2DPane.getActionValue(ActionW.ROTATION.cmd());
+        String[] po = TagD.getTagValue(image, Tag.PatientOrientation, String[].class);// 用于描述图像第一行和第一列相对于病人的方向。在DICOM坐标系中，X轴正向指向病人的左侧，Y轴正向指向病人的背部，Z轴正向指向病人的头部
+        // 影像中如果有方向，并且有旋转角度
         if (po != null && po.length == 2 && (rotationAngle == null || rotationAngle == 0)) {
           // Do not display if there is a transformation
+          // 是否水平翻转
           if (LangUtil.getNULLtoFalse((Boolean) view2DPane.getActionValue((ActionW.FLIP.cmd())))) {
             colLeft = po[0];
           } else {
@@ -459,51 +516,55 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
         }
       }
       if (rowTop != null && colLeft != null) {
-        String[] left = colLeft.split(StringUtil.SPACE);
-        String[] top = rowTop.split(StringUtil.SPACE);
+        String[] left = colLeft.split(StringUtil.SPACE);// 当有旋转或者其他定向时，会有小角标，表示当前旋转到哪个方向
+        String[] top = rowTop.split(StringUtil.SPACE);// 当有旋转或者其他定向时，会有小角标，表示当前旋转到哪个方向
 
-        Font oldFont = g2.getFont();
-        Font bigFont = oldFont.deriveFont(oldFont.getSize() + 5.0f);
-        g2.setFont(bigFont);
+        Font oldFont = g2.getFont();// 原先的显示字体
+        Font bigFont = oldFont.deriveFont(oldFont.getSize() + 5.0f);// 定向的显示字体
+        g2.setFont(bigFont);// 设置定向的显示字体
         Map<TextAttribute, Object> map = new HashMap<>(1);
         map.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB);
-        String bigLetter = top.length > 0 && top[0].length() > 0 ? top[0] : StringUtil.SPACE;
-        int shiftX = g2.getFontMetrics().stringWidth(bigLetter);
-        int shiftY = fontHeight + GuiUtils.getScaleLength(5);
-        FontTools.paintColorFontOutline(g2, bigLetter, midX - shiftX, shiftY, highlight);
         Font subscriptFont = bigFont.deriveFont(map);
+
+        // 上方定向标识
+        String bigLetter = top.length > 0 && top[0].length() > 0 ? top[0] : StringUtil.SPACE;// 上方的定向
+        int shiftX = g2.getFontMetrics().stringWidth(bigLetter);// 文本在X轴的尺寸
+        int shiftY = fontHeight + GuiUtils.getScaleLength(5);// 文本在Y轴的尺寸
+        FontTools.paintColorFontOutline(g2, bigLetter, midX - shiftX, shiftY, highlight);// 块中上方
+        // 如果有小角标
         if (top.length > 1) {
-          g2.setFont(subscriptFont);
+          g2.setFont(subscriptFont); // 设置重定向小角标的显示字体
           FontTools.paintColorFontOutline(
               g2,
               String.join("-", Arrays.copyOfRange(top, 1, top.length)),
               midX,
               shiftY,
-              highlight);
-          g2.setFont(bigFont);
+              highlight); // 块中上方，根据字体大小和x周的位置，最终会显示在定向字体的右下方
+          g2.setFont(bigFont);// 设置回定向显示字体
         }
 
-        bigLetter = left.length > 0 && left[0].length() > 0 ? left[0] : StringUtil.SPACE;
-        FontTools.paintColorFontOutline(
-            g2, bigLetter, (float) (border + thickLength), midY + fontHeight / 2.0f, highlight);
-
+        // 左侧定向标识
+        bigLetter = left.length > 0 && left[0].length() > 0 ? left[0] : StringUtil.SPACE; // 左侧的定向
+        FontTools.paintColorFontOutline(g2, bigLetter, (float) (minX + thickLength), midY + fontHeight / 2.0f, highlight); // 块中左方，并且排在比例尺之后所以需要添加比例尺的宽度
+        // 如果有小角标
         if (left.length > 1) {
-          shiftX = g2.getFontMetrics().stringWidth(bigLetter);
-          g2.setFont(subscriptFont);
+          shiftX = g2.getFontMetrics().stringWidth(bigLetter); // 文本在X轴的尺寸
+          g2.setFont(subscriptFont); // 设置重定向小角标的显示字体
           FontTools.paintColorFontOutline(
               g2,
               String.join("-", Arrays.copyOfRange(left, 1, left.length)),
-              (float) (border + thickLength + shiftX),
+              (float) (minX + thickLength + shiftX),
               midY + fontHeight / 2.0f,
-              highlight);
+              highlight);// 块中左方，并且排在比例尺之后所以需要添加比例尺的宽度，根据字体大小和x周的位置，最终会显示在定向字体的右下方
         }
-        g2.setFont(oldFont);
+        g2.setFont(oldFont);// 设置回原本的字体大小
       }
 
       float offsetY = bound.height - border - GuiUtils.getScaleLength(1.5f); // -1.5 for outline
-      FontTools.paintFontOutline(g2, orientation.toString(), border, offsetY);
-
+      FontTools.paintFontOutline(g2, orientation.toString(), minX, offsetY); // 块左下方
+      // 如果有图像处理方式
       if (plan != null) {
+        // 如果正在进行mpr，在定向后面增加对应颜色的小方块
         if (view2DPane instanceof MprView) {
           Color planColor = null;
           if (Plan.AXIAL.equals(plan)) {
@@ -514,17 +575,17 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
             planColor = Biped.L.getColor();
           }
 
-          int shiftX = g2.getFontMetrics().stringWidth(orientation.toString());
-          g2.setColor(planColor);
-          int size = midFontHeight - fontMetrics.getDescent();
-          int shiftY = bound.height - border - size;
-          g2.fillRect(border + shiftX, shiftY, size - 1, size - 1);
+          int shiftX = g2.getFontMetrics().stringWidth(orientation.toString()); // 获取定向文本的宽度，也就是小方块的x轴位置
+          g2.setColor(planColor); // 设置接下来要设置的颜色
+          int size = midFontHeight - fontMetrics.getDescent(); // 获取定向文本后面小方块的尺寸
+          int shiftY =(int) maxY - size; // 显示在最下面，并且减去小方块的高度
+          g2.fillRect((int) minX + shiftX, shiftY, size - 1, size - 1); // 添加在左下方
         }
       }
     } else {
-      positions[0] = new Point2D.Float(border, border);
-      positions[1] = new Point2D.Float((float) bound.width - border, border);
-      positions[2] = new Point2D.Float((float) bound.width - border, (float) bound.height - border);
+      positions[0] = new Point2D.Float(minX, minY);
+      positions[1] = new Point2D.Float(maxX, minY);
+      positions[2] = new Point2D.Float(maxX, maxY);
     }
 
     drawExtendedActions(g2, positions);
@@ -542,49 +603,80 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
     return null;
   }
 
-  public static void paintNotReadable(
-      Graphics2D g2, DicomImageElement image, float midX, float midY, float fontHeight) {
+  /**
+   * 创建一个倒叙的数组，左下角和右下角用，因为左下角和右下角是从下往上渲染的
+   * sle 2023年7月7日16:22:17
+   * @param arr
+   * @return
+   */
+  private static TagView[] OrderDesc(TagView[] arr){
+    // 计算有效值的个数
+    int n = 0;
+    for (TagView tagView : arr) {
+      if (tagView != null) {
+        n++;
+      }
+    }
+
+    // 创建一个新数组来存储反转后的结果
+    TagView[] newArr = new TagView[n];
+    for (int i = 0; i < n; i++) {
+      newArr[i] = arr[n - i - 1];
+    }
+    return newArr;
+  }
+
+  /**
+   * 读取影像文件失败的情况 sle 添加注释
+   * 2023年8月11日14:01:58
+   * @param g2
+   * @param image
+   * @param midX
+   * @param midY
+   * @param fontHeight
+   */
+  public static void paintNotReadable(Graphics2D g2, DicomImageElement image, float midX, float midY, float fontHeight) {
     String message = Messages.getString("InfoLayer.msg_not_read");
-    float y = midY;
-    FontTools.paintColorFontOutline(
-        g2,
-        message,
-        midX - g2.getFontMetrics().stringWidth(message) / 2.0F,
-        y,
-        IconColor.ACTIONS_RED.getColor());
+    final Color errorColor = IconColor.ACTIONS_RED.getColor(); // 错误字体颜色
+    float drawX = midX - g2.getFontMetrics().stringWidth(message) / 2.0F;
+    float drawY = midY;// 起始位置在中间
+    FontTools.paintColorFontOutline(g2, message, drawX, drawY, errorColor);
 
     if (image != null) {
-      String tsuid = TagD.getTagValue(image, Tag.TransferSyntaxUID, String.class);
+      String tsuid = TagD.getTagValue(image, Tag.TransferSyntaxUID, String.class); // 传输语法UID
+      // 如果存在传输语法UID，则显示出来
       if (StringUtil.hasText(tsuid)) {
         tsuid = Messages.getString("InfoLayer.tsuid") + StringUtil.COLON_AND_SPACE + tsuid;
-        y += fontHeight;
-        FontTools.paintColorFontOutline(
-            g2,
-            tsuid,
-            midX - g2.getFontMetrics().stringWidth(tsuid) / 2.0F,
-            y,
-            IconColor.ACTIONS_RED.getColor());
+        drawX = midX - g2.getFontMetrics().stringWidth(tsuid) / 2.0F;
+        drawY += fontHeight; // 重启一行
+        FontTools.paintColorFontOutline(g2, tsuid, drawX, drawY, errorColor);
       }
 
-      String[] desc = image.getMediaReader().getReaderDescription();
+      String[] desc = image.getMediaReader().getReaderDescription(); // 应该是影像的一些描述信息
+      // 如果存在的就依次往下一行显示
       if (desc != null) {
         for (String str : desc) {
           if (StringUtil.hasText(str)) {
-            y += fontHeight;
-            FontTools.paintColorFontOutline(
-                g2,
-                str,
-                midX - g2.getFontMetrics().stringWidth(str) / 2F,
-                y,
-                IconColor.ACTIONS_RED.getColor());
+            drawX = midX - g2.getFontMetrics().stringWidth(str) / 2F;
+            drawY += fontHeight;// 重启一行
+            FontTools.paintColorFontOutline(g2, str, drawX, drawY, errorColor); // 块中央、上一行文本的下一行
           }
         }
       }
     }
   }
 
-  public static float checkAndPaintLossyImage(
-      Graphics2D g2d, TagReadable taggable, float drawY, float fontHeight, int border) {
+  /**
+   * 有损压缩的情况 sle
+   * 2023年8月11日14:12:54
+   * @param g2d
+   * @param taggable
+   * @param drawY
+   * @param fontHeight
+   * @param border
+   * @return
+   */
+  public static float checkAndPaintLossyImage(Graphics2D g2d, TagReadable taggable, float drawY, float fontHeight, int border) {
     /*
      * IHE BIR RAD TF-­‐2: 4.16.4.2.2.5.8
      *
@@ -594,7 +686,7 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
      * Image Management Devices, July 27, 2000).
      */
     if ("01".equals(TagD.getTagValue(taggable, Tag.LossyImageCompression))) {
-      double[] rates = TagD.getTagValue(taggable, Tag.LossyImageCompressionRatio, double[].class);
+      double[] rates = TagD.getTagValue(taggable, Tag.LossyImageCompressionRatio, double[].class);// 获取有损压缩后的压缩比
       StringBuilder buf = new StringBuilder(Messages.getString("InfoLayer.lossy"));
       buf.append(StringUtil.COLON_AND_SPACE);
       if (rates != null && rates.length > 0) {
@@ -614,9 +706,8 @@ public class InfoLayer extends AbstractInfoLayer<DicomImageElement> {
         }
       }
 
-      FontTools.paintColorFontOutline(
-          g2d, buf.toString(), border, drawY, IconColor.ACTIONS_RED.getColor());
-      drawY -= fontHeight;
+      FontTools.paintColorFontOutline(g2d, buf.toString(), border, drawY, IconColor.ACTIONS_RED.getColor());
+      drawY -= fontHeight; // 高度再减一行，因为这这里已经渲染了一行了
     }
     return drawY;
   }

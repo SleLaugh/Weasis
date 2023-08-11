@@ -64,6 +64,10 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
     this.loadSeries = loadSeries;
   }
 
+  /**
+   * DICOM浏览器 双击某个序列 sle 添加注释
+   * 2023年5月10日16:07:02
+   */
   @Override
   public void mouseClicked(MouseEvent e) {
     if (e.getClickCount() == 2) {
@@ -89,6 +93,10 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
     }
   }
 
+  /**
+   * DICOM浏览器，影像右键菜单 sle 添加注释
+   * 2023年5月10日17:38:22
+   */
   @Override
   public void mousePressed(MouseEvent mouseevent) {
     final Component c = mouseevent.getComponent();
@@ -133,7 +141,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
           menuFactory.setIcon(viewerFactory.getIcon());
           GuiUtils.applySelectedIconEffect(menuFactory);
 
-          JMenuItem item4 = new JMenuItem(Messages.getString("DicomExplorer.open"));
+          JMenuItem item4 = new JMenuItem(Messages.getString("DicomExplorer.open")); // 打开 sle 添加注释 2023年5月10日15:57:11
           item4.addActionListener(
               e -> {
                 selList.setOpeningSeries(true);
@@ -148,7 +156,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
             item4 =
                 new JMenuItem(
                     Messages.getString("DicomExplorer.open_win"),
-                    ResourceUtil.getIcon(ActionIcon.OPEN_NEW_TAB));
+                    ResourceUtil.getIcon(ActionIcon.OPEN_NEW_TAB));  // 在新标签页中打开 sle 添加注释 2023年5月10日15:57:11
             GuiUtils.applySelectedIconEffect(item4);
             item4.addActionListener(
                 e -> {
@@ -162,7 +170,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             final GraphicsDevice[] gd = ge.getScreenDevices();
             if (gd.length > 0) {
-              JMenu subMenu = new JMenu(Messages.getString("DicomExplorer.open_screen"));
+              JMenu subMenu = new JMenu(Messages.getString("DicomExplorer.open_screen"));  // 在屏幕上打开，选择屏幕 sle 添加注释 2023年5月10日15:57:11
               for (GraphicsDevice graphicsDevice : gd) {
                 GraphicsConfiguration config = graphicsDevice.getDefaultConfiguration();
                 final Rectangle b = config.getBounds();
@@ -181,7 +189,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
           }
 
           if (viewerFactory.canAddSeries()) {
-            item4 = new JMenuItem(Messages.getString("DicomExplorer.add"));
+            item4 = new JMenuItem(Messages.getString("DicomExplorer.add")); // 添加 sle 添加注释 2023年5月10日15:58:29
             item4.addActionListener(
                 e -> {
                   selList.setOpeningSeries(true);
@@ -197,7 +205,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
           if (viewerFactory instanceof MimeSystemAppFactory) {
             final JMenuItem item5 =
                 new JMenuItem(
-                    Messages.getString("DicomExplorer.open_info"),
+                    Messages.getString("DicomExplorer.open_info"),  // 打开DICOM信息 sle 添加注释 2023年8月11日09:49:43
                     ResourceUtil.getIcon(ActionIcon.METADATA));
             GuiUtils.applySelectedIconEffect(item5);
             item5.addActionListener(
@@ -213,7 +221,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
       if (series instanceof DicomSeries) {
         if (selList.size() == 1) {
           popupMenu.add(new JSeparator());
-          JMenuItem item2 = new JMenuItem(Messages.getString("DicomExplorer.sel_rel_series"));
+          JMenuItem item2 = new JMenuItem(Messages.getString("DicomExplorer.sel_rel_series"));  // 选择相关序列 sle 添加注释 2023年5月10日16:00:24
           item2.addActionListener(
               e -> {
                 String fruid = TagD.getTagValue(series, Tag.FrameOfReferenceUID, String.class);
@@ -232,7 +240,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
                 }
               });
           popupMenu.add(item2);
-          item2 = new JMenuItem(Messages.getString("DicomExplorer.sel_rel_series_axis"));
+          item2 = new JMenuItem(Messages.getString("DicomExplorer.sel_rel_series_axis")); //  选择相关序列（同时间轴） sle 添加注释 2023年5月10日16:00:43
           item2.addActionListener(
               e -> {
                 String fruid = TagD.getTagValue(series, Tag.FrameOfReferenceUID, String.class);
@@ -258,7 +266,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
             popupMenu.add(new JSeparator());
             JMenuItem item3 =
                 new JMenuItem(
-                    Messages.getString("LoadSeries.resume"),
+                    Messages.getString("LoadSeries.resume"),  // 继续下载 sle 添加注释 2023年5月10日16:01:06
                     ResourceUtil.getIcon(ActionIcon.EXECUTE));
             item3.addActionListener(e -> loadSeries.resume());
             popupMenu.add(item3);
@@ -266,7 +274,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
             popupMenu.add(new JSeparator());
             JMenuItem item3 =
                 new JMenuItem(
-                    Messages.getString("LoadSeries.stop"),
+                    Messages.getString("LoadSeries.stop"), // 停止下载 sle 添加注释 2023年5月10日16:01:13
                     ResourceUtil.getIcon(ActionIcon.SUSPEND));
             item3.addActionListener(e -> loadSeries.stop());
             popupMenu.add(item3);
@@ -287,7 +295,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
           }
           if (sameOrigin) {
             popupMenu.add(new JSeparator());
-            JMenuItem item2 = new JMenuItem(Messages.getString("DicomExplorer.merge"));
+            JMenuItem item2 = new JMenuItem(Messages.getString("DicomExplorer.merge")); // 右键合并选定序列 sle 添加注释 2023年5月10日16:01:43
             item2.addActionListener(
                 e -> {
                   selList.clear();
@@ -298,7 +306,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
         }
       }
       popupMenu.add(new JSeparator());
-      JMenuItem item2 = new JMenuItem(Messages.getString("DicomExplorer.rem_series"));
+      JMenuItem item2 = new JMenuItem(Messages.getString("DicomExplorer.rem_series")); // 删除选定序列 sle 添加注释 2023年5月10日16:02:39
       item2.addActionListener(
           e -> {
             for (int i = selList.size() - 1; i >= 0; i--) {
@@ -308,7 +316,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
           });
       popupMenu.add(item2);
       if (selList.size() == 1) {
-        item2 = new JMenuItem(Messages.getString("DicomExplorer.rem_study"));
+        item2 = new JMenuItem(Messages.getString("DicomExplorer.rem_study")); // 删除此检查 sle 添加注释 2023年5月10日16:02:56
         item2.addActionListener(
             e -> {
               MediaSeriesGroup studyGroup = dicomModel.getParent(series, DicomModel.study);
@@ -316,7 +324,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
               selList.clear();
             });
         popupMenu.add(item2);
-        item2 = new JMenuItem(Messages.getString("DicomExplorer.rem_pat"));
+        item2 = new JMenuItem(Messages.getString("DicomExplorer.rem_pat")); // 删除此患者 sle 添加注释 2023年5月10日16:03:09
         item2.addActionListener(
             e -> {
               MediaSeriesGroup patientGroup =
@@ -329,8 +337,8 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
         if (series.size(null) > 1) {
           if (series.getMedia(0, null, null) instanceof ImageElement) {
             popupMenu.add(new JSeparator());
-            JMenu menu = new JMenu(Messages.getString("DicomExplorer.build_thumb"));
-            item2 = new JMenuItem(Messages.getString("DicomExplorer.from_1"));
+            JMenu menu = new JMenu(Messages.getString("DicomExplorer.build_thumb")); // 重建略缩图 sle 添加注释 2023年5月10日16:03:20
+            item2 = new JMenuItem(Messages.getString("DicomExplorer.from_1")); // 从第一张图 sle 添加注释 2023年5月10日16:03:34
             item2.addActionListener(
                 e -> {
                   SeriesThumbnail t = (SeriesThumbnail) series.getTagValue(TagW.Thumbnail);
@@ -339,7 +347,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
                   }
                 });
             menu.add(item2);
-            item2 = new JMenuItem(Messages.getString("DicomExplorer.from_mid"));
+            item2 = new JMenuItem(Messages.getString("DicomExplorer.from_mid")); // 从中间的图 sle 添加注释 2023年5月10日16:03:51
             item2.addActionListener(
                 e -> {
                   SeriesThumbnail t = (SeriesThumbnail) series.getTagValue(TagW.Thumbnail);
@@ -348,7 +356,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
                   }
                 });
             menu.add(item2);
-            item2 = new JMenuItem(Messages.getString("DicomExplorer.from_last"));
+            item2 = new JMenuItem(Messages.getString("DicomExplorer.from_last")); // 从最后的图 sle 添加注释 2023年5月10日16:04:07
             item2.addActionListener(
                 e -> {
                   SeriesThumbnail t = (SeriesThumbnail) series.getTagValue(TagW.Thumbnail);

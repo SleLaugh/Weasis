@@ -143,19 +143,23 @@ public class SRContainer extends DicomViewerPlugin implements PropertyChangeList
       String componentName = InsertableUtil.getCName(this.getClass());
       String key = "enable"; // NON-NLS
 
-      if (InsertableUtil.getBooleanProperty(
-          BundleTools.SYSTEM_PREFERENCES,
-          bundleName,
-          componentName,
-          InsertableUtil.getCName(ImportToolBar.class),
-          key,
-          true)) {
-        Optional<Toolbar> b =
-            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
-                .filter(t -> t instanceof ImportToolBar)
-                .findFirst();
-        b.ifPresent(TOOLBARS::add);
-      }
+      /**
+       * 隐藏DICOM导入 sle
+       * 2023年8月11日11:09:21
+       */
+//      if (InsertableUtil.getBooleanProperty(
+//          BundleTools.SYSTEM_PREFERENCES,
+//          bundleName,
+//          componentName,
+//          InsertableUtil.getCName(ImportToolBar.class),
+//          key,
+//          true)) {
+//        Optional<Toolbar> b =
+//            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
+//                .filter(t -> t instanceof ImportToolBar)
+//                .findFirst();
+//        b.ifPresent(TOOLBARS::add);
+//      }
       if (InsertableUtil.getBooleanProperty(
           BundleTools.SYSTEM_PREFERENCES,
           bundleName,

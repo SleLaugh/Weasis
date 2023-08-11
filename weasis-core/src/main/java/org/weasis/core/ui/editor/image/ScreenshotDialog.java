@@ -49,6 +49,11 @@ import org.weasis.opencv.data.PlanarImage;
 import org.weasis.opencv.op.ImageConversion;
 import org.weasis.opencv.op.ImageProcessor;
 
+/**
+ * 捕获选中视图 sle 添加注释
+ * 2023年7月14日09:34:24
+ * @param <I>
+ */
 public class ScreenshotDialog<I extends ImageElement> extends JDialog {
   public static final String P_LAST_DIR = "screenshot.last.dir";
   static final String DICOM = "DICOM"; // NON-NLS

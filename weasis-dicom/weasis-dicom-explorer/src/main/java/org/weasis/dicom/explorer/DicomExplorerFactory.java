@@ -32,7 +32,11 @@ public class DicomExplorerFactory implements DataExplorerViewFactory {
     if (explorer == null) {
       explorer = new DicomExplorer(model);
       model.addPropertyChangeListener(explorer);
-      UIManager.EXPLORER_PLUGIN_TOOLBARS.add(new ImportToolBar(5, explorer));
+      /**
+       * 隐藏DICOM导入 --没有影像时 sle
+       * 2023年8月11日11:07:17
+       */
+//      UIManager.EXPLORER_PLUGIN_TOOLBARS.add(new ImportToolBar(5, explorer));
       UIManager.EXPLORER_PLUGIN_TOOLBARS.add(new ExportToolBar(7, explorer));
       ViewerPluginBuilder.DefaultDataModel.firePropertyChange(
           new ObservableEvent(ObservableEvent.BasicAction.NULL_SELECTION, explorer, null, null));

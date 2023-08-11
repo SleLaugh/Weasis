@@ -17,6 +17,7 @@ import static java.time.temporal.ChronoField.SECOND_OF_MINUTE;
 import static java.time.temporal.ChronoField.YEAR;
 
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -273,6 +274,12 @@ public class TagD extends TagW {
     return vr == other.vr;
   }
 
+  /**
+   * 获取tag值 sle
+   * 2023年7月5日16:02:38
+   * @param data
+   * @return
+   */
   @Override
   public Object getValue(Object data) {
     Object value = null;
@@ -282,6 +289,32 @@ public class TagD extends TagW {
       value = readValue(xmlStreamReader);
     } else if (data instanceof String s) {
       value = readValue(s);
+    }
+
+    /**
+     * 新增逻辑，获取值时进行gbk 转码，处理中文乱码的情况 sle
+     * 2023年7月5日16:03:35
+     */
+    if(value != null) {
+      try {
+        if (value instanceof String) {
+          return new String(value.toString().getBytes("ISO-8859-1"), "gbk");
+        }
+        else if (value instanceof Object[]){
+          Object[] values = (Object[]) value;
+          for (int i = 0; i < values.length; i++) {
+            if (values[i] instanceof String) {
+              values[i] = new String(values[i].toString().getBytes("ISO-8859-1"), "gbk");
+            }
+          }
+          return values;
+        }
+        else{
+          return value;
+        }
+      } catch (UnsupportedEncodingException e) {
+        return value;
+      }
     }
     return value;
   }
@@ -481,18 +514,26 @@ public class TagD extends TagW {
     if (value == null) {
       return StringUtil.EMPTY_STRING;
     }
-
+/**
+ * 修改逻辑，以前直接返回Tag值，不带format，现在将Tag值进行原本的转换，然后配合format转出 sle
+ * 2023年6月2日11:36:26
+ */
+    // 患者姓名
     if (TagType.DICOM_PERSON_NAME.equals(type)) {
       if (value instanceof String[] strings) {
-        return Arrays.stream(strings)
-            .map(TagD::getDicomPersonName)
-            .collect(Collectors.joining(", "));
+        value = Arrays.stream(strings)
+                .map(TagD::getDicomPersonName)
+                .collect(Collectors.joining(", "));
       }
-      return getDicomPersonName(value.toString());
-    } else if (TagType.DICOM_PERIOD.equals(type)) {
-      return getDicomPeriod(value.toString());
-    } else if (TagType.DICOM_SEX.equals(type)) {
-      return getDicomPatientSex(value.toString());
+      value = getDicomPersonName(value.toString());
+    }
+    // 采集间隔、年纪
+    else if (TagType.DICOM_PERIOD.equals(type)) {
+      value = getDicomPeriod(value.toString());
+    }
+    // 患者性别
+    else if (TagType.DICOM_SEX.equals(type)) {
+      value = getDicomPatientSex(value.toString());
     }
     return super.getFormattedTagValue(value, format);
   }
@@ -918,6 +959,13 @@ public class TagD extends TagW {
       case 'D': // NON-NLS
         unit = ChronoUnit.DAYS.toString();
         break;
+      /**
+       * 四角信息生日tag标签 sle
+       * 如果最后一位是e,目前已知的是生日tag标签，而不是具体的值，那么就直接返回原tag标签文本
+       * 2023年8月11日11:12:01
+       */
+      case 'e': // NON-NLS
+        return value;
       default:
         return StringUtil.EMPTY_STRING;
     }
@@ -972,6 +1020,16 @@ public class TagD extends TagW {
     if (!StringUtil.hasText(val)) {
       return StringUtil.EMPTY_STRING;
     }
+
+    /**
+     * 如果val中存在sex，说明是tag标签而不是值，那么就直接返回tag标签的文本而不是具体的性别value sle
+     * 2023年6月28日14:20:25
+     */
+    String lowerCaseVal = val.toLowerCase();
+    if (lowerCaseVal.contains("sex")) {
+      return val;
+    }
+
     return Sex.getSex(val).toString();
   }
 }

@@ -101,7 +101,8 @@ public class AbstractKOSpecialElement extends DicomSpecialElement {
   }
 
   /**
-   * sle 2023年8月10日17:06:41
+   * 获取关键影像组中的影像数据 sle
+   * 2023年8月10日17:06:41
    * @return
    */
   public List<Attributes> getAttributesList() {

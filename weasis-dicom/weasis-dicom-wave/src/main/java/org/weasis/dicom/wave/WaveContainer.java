@@ -149,19 +149,23 @@ public class WaveContainer extends DicomViewerPlugin implements PropertyChangeLi
       String componentName = InsertableUtil.getCName(this.getClass());
       String key = "enable"; // NON-NLS
 
-      if (InsertableUtil.getBooleanProperty(
-          BundleTools.SYSTEM_PREFERENCES,
-          bundleName,
-          componentName,
-          InsertableUtil.getCName(ImportToolBar.class),
-          key,
-          true)) {
-        Optional<Toolbar> b =
-            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
-                .filter(ImportToolBar.class::isInstance)
-                .findFirst();
-        b.ifPresent(TOOLBARS::add);
-      }
+      /**
+       * 隐藏DICOM导入 sle
+       * 2023年8月11日11:10:20
+       */
+//      if (InsertableUtil.getBooleanProperty(
+//          BundleTools.SYSTEM_PREFERENCES,
+//          bundleName,
+//          componentName,
+//          InsertableUtil.getCName(ImportToolBar.class),
+//          key,
+//          true)) {
+//        Optional<Toolbar> b =
+//            UIManager.EXPLORER_PLUGIN_TOOLBARS.stream()
+//                .filter(ImportToolBar.class::isInstance)
+//                .findFirst();
+//        b.ifPresent(TOOLBARS::add);
+//      }
       if (InsertableUtil.getBooleanProperty(
           BundleTools.SYSTEM_PREFERENCES,
           bundleName,

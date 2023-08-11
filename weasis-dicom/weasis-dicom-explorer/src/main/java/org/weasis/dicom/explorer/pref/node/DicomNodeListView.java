@@ -16,8 +16,16 @@ import org.weasis.core.api.gui.util.AbstractItemDialogPage;
 import org.weasis.core.api.gui.util.GuiUtils;
 import org.weasis.dicom.explorer.Messages;
 
+/**
+ * 设置-DICOM节点列表 sle 添加注释
+ * 2023年5月15日14:22:22
+ */
 public class DicomNodeListView extends AbstractItemDialogPage {
 
+  /**
+   * 设置-DICOM节点列表 构造函数 sle 添加注释
+   * 2023年5月15日14:22:22
+   */
   public DicomNodeListView() {
     super(Messages.getString("DicomNodeListView.node_list"), 605);
     initGUI();
@@ -36,7 +44,7 @@ public class DicomNodeListView extends AbstractItemDialogPage {
     final JComboBox<AbstractDicomNode> nodeComboBox = new JComboBox<>();
     AbstractDicomNode.loadDicomNodes(nodeComboBox, nodeType);
     AbstractDicomNode.addTooltipToComboList(nodeComboBox);
-    GuiUtils.setPreferredWidth(nodeComboBox, 270, 150);
+    GuiUtils.setPreferredWidth(nodeComboBox, 200, 150); // 宽由270改为200 sle 2023年8月11日10:29:59
     JButton editButton = new JButton(Messages.getString("DicomNodeListView.edit"));
     JButton deleteButton = new JButton(Messages.getString("DicomNodeListView.delete"));
     JButton addNodeButton = new JButton(Messages.getString("DicomNodeListView.add_new"));

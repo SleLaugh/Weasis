@@ -55,6 +55,7 @@ public class ModalityView {
      * See IHE BIR RAD TF-­‐2: 4.16.4.2.2.5.8
      */
     // Default profile of tag formats
+    // 左上角 sle 2023年8月10日17:57:30
     TagView[] disElements = DEFAULT_MODALITY_VIEW.getCornerInfo(CornerDisplay.TOP_LEFT).getInfos();
     disElements[0] = new TagView(TagD.get(Tag.PatientName));
     disElements[1] = new TagView(TagD.get(Tag.PatientBirthDate));
@@ -62,13 +63,12 @@ public class ModalityView {
     disElements[3] = new TagView(Messages.getString("ModalityView.sex"), TagD.get(Tag.PatientSex));
     disElements[4] = new TagView(TagD.get(Tag.PatientAge));
 
+    // 右上角 sle 2023年8月10日17:57:37
     disElements = DEFAULT_MODALITY_VIEW.getCornerInfo(CornerDisplay.TOP_RIGHT).getInfos();
     disElements[0] = new TagView(TagD.get(Tag.InstitutionName));
-    disElements[1] =
-        new TagView(Messages.getString("ModalityView.desc25"), TagD.get(Tag.StudyDescription));
+    disElements[1] = new TagView(Messages.getString("ModalityView.desc25"), TagD.get(Tag.StudyDescription));
     disElements[2] = new TagView(Messages.getString("ModalityView.study"), TagD.get(Tag.StudyID));
-    disElements[3] =
-        new TagView(Messages.getString("ModalityView.ac_nb"), TagD.get(Tag.AccessionNumber));
+    disElements[3] = new TagView(Messages.getString("ModalityView.ac_nb"), TagD.get(Tag.AccessionNumber));
     // else content date, else Series date, else Study date
     disElements[4] =
         new TagView(
@@ -90,6 +90,7 @@ public class ModalityView {
                 Tag.SeriesTime,
                 Tag.StudyTime));
 
+    // 右下角 sle 2023年8月10日17:57:59
     disElements = DEFAULT_MODALITY_VIEW.getCornerInfo(CornerDisplay.BOTTOM_RIGHT).getInfos();
     disElements[1] =
         new TagView(Messages.getString("ModalityView.series_nb"), TagD.get(Tag.SeriesNumber));
@@ -136,6 +137,13 @@ public class ModalityView {
   }
 
   private static Modality getModdality(String name) {
+    /**
+     * 当检查类型名称为空时，返回空 sle
+     * 2023年8月11日11:16:52
+     */
+    if (name == null) {
+      return null;
+    }
     try {
       return Modality.valueOf(name);
     } catch (Exception e) {

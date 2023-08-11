@@ -244,9 +244,13 @@ public class MprContainer extends DicomViewerPlugin implements PropertyChangeLis
       // props.putBooleanProperty("weasis.toolbar.synch.button", false);
 
       EventManager evtMg = EventManager.getInstance();
-      Optional<Toolbar> importBar =
-          View2dContainer.TOOLBARS.stream().filter(ImportToolBar.class::isInstance).findFirst();
-      importBar.ifPresent(TOOLBARS::add);
+      /**
+       * 隐藏DICOM导入 sle
+       * 2023年8月11日11:09:49
+       */
+//      Optional<Toolbar> importBar =
+//          View2dContainer.TOOLBARS.stream().filter(ImportToolBar.class::isInstance).findFirst();
+//      importBar.ifPresent(TOOLBARS::add);
       Optional<Toolbar> exportBar =
           View2dContainer.TOOLBARS.stream().filter(ExportToolBar.class::isInstance).findFirst();
       exportBar.ifPresent(TOOLBARS::add);
@@ -343,8 +347,12 @@ public class MprContainer extends DicomViewerPlugin implements PropertyChangeLis
     super.setSelected(true);
   }
 
+  /**
+   * 由 protected 改为 public，用来设置打开时的布局 sle
+   * 2023年8月11日09:43:24
+   */
   @Override
-  protected synchronized void setLayoutModel(GridBagLayoutModel layoutModel) {
+  public synchronized void setLayoutModel(GridBagLayoutModel layoutModel) {
     super.setLayoutModel(layoutModel);
     if (eventManager instanceof EventManager manager) {
       // Force to refresh view with ZoomType.CURRENT

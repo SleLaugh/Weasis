@@ -779,8 +779,8 @@ public abstract class DefaultView2d<E extends ImageElement> extends GraphicsPane
   }
 
   /**
-   * 字体自适应
-   * sle 2023年8月10日16:51:59
+   * 字体自适应 sle
+   * 2023年8月10日16:51:59
    * @param fontMetrics
    * @param width
    * @return

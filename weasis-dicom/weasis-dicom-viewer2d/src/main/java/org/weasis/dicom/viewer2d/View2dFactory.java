@@ -51,6 +51,7 @@ import org.weasis.core.ui.util.DefaultAction;
 import org.weasis.dicom.codec.DicomCodec;
 import org.weasis.dicom.codec.DicomMediaIO;
 import org.weasis.dicom.codec.TagD;
+import org.weasis.dicom.codec.display.Modality;
 import org.weasis.dicom.explorer.DicomExplorer;
 import org.weasis.dicom.explorer.DicomModel;
 
@@ -58,7 +59,7 @@ import org.weasis.dicom.explorer.DicomModel;
 public class View2dFactory implements SeriesViewerFactory {
   private static final Logger LOGGER = LoggerFactory.getLogger(View2dFactory.class);
 
-  public static final String NAME = Messages.getString("View2dFactory.title");
+  public static final String NAME = Messages.getString("View2dFactory.Title");
 
   private static final DefaultAction preferencesAction =
       new DefaultAction(
@@ -109,6 +110,24 @@ public class View2dFactory implements SeriesViewerFactory {
       }
     }
     View2dContainer instance = new View2dContainer(model, uid, getUIName(), getIcon(), null);
+
+    /**
+     * 获取将要打开的影像，根据检查类型设置布局 Sle
+     * 2023年5月10日14:43:30
+      */
+    MediaElement media = (MediaElement) properties.get("Media");
+    if (media != null) {
+      Modality modality = Modality.getModality(media.getTagValue(media.getTagElement(Tag.Modality)).toString());
+      if (modality != null) {
+        // 根据检查类型获取配置文件里的布局
+        GridBagLayoutModel modalityModel = instance.getLayoutByModality(modality.name());
+        // 如果这个布局存在
+        if (modalityModel != null) {
+          instance.setLayoutModel(modalityModel);
+        }
+      }
+    }
+
     if (properties != null) {
       Object obj = properties.get(DataExplorerModel.class.getName());
       if (obj instanceof DicomModel m) {

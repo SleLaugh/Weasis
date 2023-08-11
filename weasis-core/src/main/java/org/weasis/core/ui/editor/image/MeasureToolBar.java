@@ -58,6 +58,10 @@ public class MeasureToolBar extends WtoolBar {
 
   public static final SelectGraphic selectionGraphic = new SelectGraphic();
 
+  /**
+   * 形状的集合 sle 添加注释
+   * 2023年5月12日15:24:37
+   */
   public static final List<Graphic> measureGraphicList = new ArrayList<>();
   public static final List<Graphic> drawGraphicList = new ArrayList<>();
 

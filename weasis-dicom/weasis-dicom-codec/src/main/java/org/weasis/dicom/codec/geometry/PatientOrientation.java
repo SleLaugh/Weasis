@@ -31,6 +31,11 @@ public class PatientOrientation {
   public static final Color red = new Color(15539236);
   public static final Color green = new Color(897355);
 
+  /**
+   * 定向方位枚举 sle
+   * 2023年8月11日15:11:33
+   * 添加中文描述 sle
+   */
   public enum Biped implements Orientation {
     R(Messages.getString("Biped.right"), blue), // NON-NLS
     L(Messages.getString("Biped.left"), blue), // NON-NLS
@@ -74,6 +79,11 @@ public class PatientOrientation {
     }
   }
 
+  /**
+   * 定向方位枚举 sle
+   * 2023年8月11日15:11:33
+   * 添加中文描述 sle
+   */
   public enum Quadruped implements Orientation {
     RT(Messages.getString("Quadruped.right"), blue),
     LE(Messages.getString("Quadruped.left"), blue),

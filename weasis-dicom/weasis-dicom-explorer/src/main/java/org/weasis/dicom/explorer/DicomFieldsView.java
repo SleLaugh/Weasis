@@ -226,6 +226,13 @@ public class DicomFieldsView extends JTabbedPane implements SeriesViewerListener
     }
   }
 
+  /**
+   * DICOM-所有DICOM属性 sle
+   * 2023年7月5日14:56:49
+   * @param model
+   * @param dcmObj
+   * @param tag
+   */
   private static void printElement(DefaultTableModel model, Attributes dcmObj, int tag) {
     String privateCreator = dcmObj.privateCreatorOf(tag);
     int level = dcmObj.getLevel();
@@ -309,6 +316,10 @@ public class DicomFieldsView extends JTabbedPane implements SeriesViewerListener
     }
   }
 
+  /**
+   * DICOM信息-精简DICOM属性 sle
+   * 2023年7月5日14:56:49
+   */
   private void displayLimitedDicomInfo(MediaSeries<?> series, MediaElement media) {
     StyledDocument doc = jTextPaneLimited.getStyledDocument();
     applyFormatting(doc);

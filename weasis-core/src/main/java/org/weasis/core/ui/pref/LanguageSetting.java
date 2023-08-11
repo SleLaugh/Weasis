@@ -25,6 +25,10 @@ import org.weasis.core.api.service.WProperties;
 import org.weasis.core.api.util.LocalUtil;
 import org.weasis.core.util.StringUtil;
 
+/**
+ * 设置--语言 sle 添加注释
+ * 2023年5月15日11:21:15
+ */
 public class LanguageSetting extends AbstractItemDialogPage {
   private static final Logger LOGGER = LoggerFactory.getLogger(LanguageSetting.class);
 
@@ -50,6 +54,10 @@ public class LanguageSetting extends AbstractItemDialogPage {
         }
       };
 
+  /**
+   * 设置-语言 构造函数 sle 添加注释
+   * 2023年5月15日11:21:30
+   */
   public LanguageSetting() {
     super(PAGE_NAME, 101);
 

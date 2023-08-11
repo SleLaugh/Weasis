@@ -13,6 +13,10 @@ import java.util.Arrays;
 import org.weasis.core.util.StringUtil;
 import org.weasis.dicom.codec.Messages;
 
+/**
+ * 检查类型 sle 添加注释
+ * 2023年5月15日11:44:06
+ */
 public enum Modality {
   DEFAULT(Messages.getString("Modality.default")),
 

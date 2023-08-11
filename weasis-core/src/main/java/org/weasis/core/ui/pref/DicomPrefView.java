@@ -15,9 +15,18 @@ import org.weasis.core.api.gui.util.AbstractItemDialogPage;
 import org.weasis.core.api.gui.util.GuiUtils;
 import org.weasis.core.api.gui.util.PageItem;
 
+/**
+ * 设置-DICOM sle 添加注释
+ * 2023年5月15日11:25:00
+ */
 public class DicomPrefView extends AbstractItemDialogPage {
   private final JPanel menuPanel = new JPanel();
 
+  /**
+   * 设置-DICOM 构造函数 sle 添加注释
+   * 2023年5月15日11:25:00
+   * @param dialog
+   */
   public DicomPrefView(PreferenceDialog dialog) {
     super("DICOM", 600);
 

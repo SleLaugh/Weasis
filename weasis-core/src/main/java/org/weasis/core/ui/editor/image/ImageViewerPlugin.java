@@ -359,9 +359,11 @@ public abstract class ImageViewerPlugin<E extends ImageElement> extends ViewerPl
 
   /**
    * Set a layout to this view panel. The layout is defined by the provided number corresponding the
-   * layout definition in the property file.
+   * layout definition in the property file.（设置这个视图面板的布局。布局由提供的数字定义，该数字与属性文件中的布局定义相对应。）
+   * 由 protected 改为 public，用来设置打开时的布局 sle
+   * 2023年8月11日09:43:24
    */
-  protected synchronized void setLayoutModel(GridBagLayoutModel layoutModel) {
+  public synchronized void setLayoutModel(GridBagLayoutModel layoutModel) {
     this.layoutModel = layoutModel == null ? VIEWS_1x1.copy() : layoutModel.copy();
     grid.removeAll();
     // Keep views containing images
@@ -821,6 +823,12 @@ public abstract class ImageViewerPlugin<E extends ImageElement> extends ViewerPl
     return val;
   }
 
+  /**
+   * 根据类型获取指定布局 sle 添加注释
+   * 2023年5月15日17:23:36
+   * @param title 虽然是title，但是实际上是ID
+   * @return 如果id为空，则默认返回1x1
+   */
   public GridBagLayoutModel getViewLayout(String title) {
     if (title != null) {
       Optional<ComboItemListener<GridBagLayoutModel>> layout =
@@ -1178,7 +1186,7 @@ public abstract class ImageViewerPlugin<E extends ImageElement> extends ViewerPl
   }
 
   /**
-   * 获取检查类型对应布局
+   * 获取检查类型对应布局 sle
    * @return
    */
   public static Map<String, String> getModalityLayoutList() {
@@ -1187,7 +1195,7 @@ public abstract class ImageViewerPlugin<E extends ImageElement> extends ViewerPl
 
   /**
    * 根据检查类型，获取配置文件中的布局 sle
-   * 2023年5月10日17:58:41     *
+   * 2023年5月10日17:58:41
    * @param modality 检查类型
    * @return 布局方式，如果不存在的话，返回null
    */

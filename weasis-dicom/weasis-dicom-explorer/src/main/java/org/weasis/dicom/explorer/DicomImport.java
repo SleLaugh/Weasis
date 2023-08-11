@@ -30,6 +30,10 @@ import org.weasis.core.api.gui.util.PageItem;
 import org.weasis.core.api.service.BundleTools;
 import org.weasis.dicom.explorer.internal.Activator;
 
+/**
+ * 导入DICOM 菜单 sle 添加注释
+ * 2023年6月21日10:09:12
+ */
 public class DicomImport extends AbstractWizardDialog {
   private static final Logger LOGGER = LoggerFactory.getLogger(DicomImport.class);
 

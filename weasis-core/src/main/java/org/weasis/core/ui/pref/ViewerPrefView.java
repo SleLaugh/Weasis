@@ -17,21 +17,33 @@ import org.weasis.core.api.gui.util.AbstractItemDialogPage;
 import org.weasis.core.api.gui.util.GuiUtils;
 import org.weasis.core.api.gui.util.PageItem;
 
+/**
+ * 设置-查看器 sle 添加注释
+ * 2023年5月12日15:58:05
+ */
 public class ViewerPrefView extends AbstractItemDialogPage {
 
+  /**
+   * 设置-查看器 页签
+   */
   private final JPanel menuPanel = new JPanel();
 
+  /**
+   * 设置-查看器 构造函数 sle 添加注释
+   * 2023年5月12日15:57:52
+   * @param dialog
+   */
   public ViewerPrefView(PreferenceDialog dialog) {
     super(Messages.getString("viewer"), 500);
 
-    menuPanel.setLayout(new GridLayout(0, 2));
+    menuPanel.setLayout(new GridLayout(0, 2)); // 自动增加行数、每行包含两列的网格布局
     add(menuPanel);
-    add(GuiUtils.boxVerticalStrut(BLOCK_SEPARATOR));
+    add(GuiUtils.boxVerticalStrut(BLOCK_SEPARATOR)); // 添加一个垂直的空白间隔
 
-    add(GuiUtils.boxYLastElement(LAST_FILLER_HEIGHT));
+    add(GuiUtils.boxYLastElement(LAST_FILLER_HEIGHT));// 添加一个垂直的空白间隔，以填充布局的最后一行
 
     List<AbstractItemDialogPage> childPages = List.of(new LabelsPrefView());
-    childPages.forEach(p -> addSubPage(p, a -> dialog.showPage(p.getTitle()), menuPanel));
+    childPages.forEach(p -> addSubPage(p, a -> dialog.showPage(p.getTitle()), menuPanel)); // 添加为当前节点的页签，同时定义一个动作（action）来显示该页签
   }
 
   @Override

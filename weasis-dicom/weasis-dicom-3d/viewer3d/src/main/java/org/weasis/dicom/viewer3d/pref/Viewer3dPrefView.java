@@ -41,6 +41,10 @@ import org.weasis.dicom.viewer3d.geometry.Camera;
 import org.weasis.dicom.viewer3d.geometry.CameraView;
 import org.weasis.dicom.viewer3d.vr.RenderingLayer;
 
+/**
+ * 设置-3D查看器 sle 添加注释
+ * 2023年5月15日14:19:17
+ */
 public class Viewer3dPrefView extends AbstractItemDialogPage {
   private final JCheckBox enableOpenGL = new JCheckBox(Messages.getString("enable"));
   private final JButton bckColor = new JButton(ResourceUtil.getIcon(ActionIcon.PIPETTE));
@@ -54,6 +58,10 @@ public class Viewer3dPrefView extends AbstractItemDialogPage {
   private final JSpinner spinnerMaxXY;
   private final JSpinner spinnerMaxZ;
 
+  /**
+   * 设置-3D查看器 构造函数 sle 添加注释
+   * 2023年5月15日14:19:17
+   */
   public Viewer3dPrefView() {
     super(View3DFactory.NAME, 503);
     List<Integer> list = new ArrayList<>();

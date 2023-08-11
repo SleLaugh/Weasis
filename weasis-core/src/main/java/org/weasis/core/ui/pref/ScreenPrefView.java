@@ -44,8 +44,16 @@ import org.weasis.core.api.util.LocalUtil;
 import org.weasis.core.ui.editor.image.dockable.MeasureTool;
 import org.weasis.core.util.StringUtil;
 
+/**
+ * 设置-多屏显示 sle 添加注释
+ * 2023年5月15日11:22:25
+ */
 public class ScreenPrefView extends AbstractItemDialogPage {
 
+  /**
+   * 设置-多屏显示 构造函数 sle 添加注释
+   * 2023年5月15日11:22:25
+   */
   public ScreenPrefView() {
     super(Messages.getString("ScreenPrefView.monitors"), 108);
 

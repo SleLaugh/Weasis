@@ -51,8 +51,12 @@ public class Activator implements BundleActivator, ServiceListener {
     registerExistingComponents(bundleContext);
 
     // Instantiate UI components in EDT
-    GuiExecutor.instance()
-        .execute(() -> UIManager.EXPLORER_PLUGIN_TOOLBARS.add(new ImportToolBar(3)));
+    /**
+     * 隐藏DICOM导入 --没有影像时，打开影像 sle
+     * 2023年8月11日11:02:59
+     */
+//    GuiExecutor.instance()
+//        .execute(() -> UIManager.EXPLORER_PLUGIN_TOOLBARS.add(new ImportToolBar(3)));
 
     // Add listener for getting new service events
     try {

@@ -225,8 +225,8 @@ public class WeasisWin {
     rootPaneContainer.setGlassPane(AppProperties.glassPane);
 
     /**
-     * 程序标题不带版本号
-     * sle 2023年8月8日15:02:13
+     * 程序标题不带版本号 sle
+     * 2023年8月8日15:02:13
      */
 //    frame.setTitle(AppProperties.WEASIS_NAME + " v" + AppProperties.WEASIS_VERSION); // NON-NLS
     frame.setTitle(AppProperties.WEASIS_NAME); // NON-NLS
@@ -333,6 +333,9 @@ public class WeasisWin {
     UIManager.MAIN_AREA.setLocation(CLocation.base().normalRectangle(0, 0, 1, 1));
     UIManager.MAIN_AREA.setVisible(true);
 
+    /**
+     * 检查是否进行更新检查 sle 添加注释 2023年8月11日10:46:46
+     */
     boolean updateRelease =
         BundleTools.SYSTEM_PREFERENCES.getBooleanProperty("weasis.update.release", true);
     boolean showDownloadRelease =
@@ -400,6 +403,16 @@ public class WeasisWin {
     if (seriesList.size() > 1) {
       props.put(ViewCanvas.class.getName(), seriesList.size());
     }
+
+    /**
+     * 将即将需要打开的影像数据写到传递的参数中 Sle
+     * 2023年4月27日14:43:37
+     */
+    MediaElement media = builder.getSeries().get(0).getMedia(0,null,null);
+    if (media != null){
+      props.put("Media", media);
+    }
+
     SeriesViewer<?> seriesViewer = factory.createSeriesViewer(props);
     if (seriesViewer instanceof MimeSystemAppViewer) {
       for (MediaSeries m : seriesList) {
@@ -457,11 +470,16 @@ public class WeasisWin {
       }
       if (registered) {
         viewer.setSelectedAndGetFocus();
-        if (seriesViewer instanceof ImageViewerPlugin) {
-          if (!setInSelection) {
-            ((ImageViewerPlugin) viewer).selectLayoutPositionForAddingSeries(seriesList);
-          }
-        }
+          /**
+           * 如果是打开新的窗体，则将当前选中项改为最后一项
+           * 注释掉本行，目前如果非1x1布局打开，会将选择项定位到最后一行 sle
+           * 2023年5月10日15:47:39
+           */
+//        if (seriesViewer instanceof ImageViewerPlugin) {
+//          if (!setInSelection) {
+//            ((ImageViewerPlugin) viewer).selectLayoutPositionForAddingSeries(seriesList);
+//          }
+//        }
         for (MediaSeries m : seriesList) {
           viewer.addSeries(m);
         }
@@ -766,8 +784,8 @@ public class WeasisWin {
         });
     helpMenuItem.add(aboutMenuItem);
     /**
-     * 隐藏帮助菜单
-     * sle 2023年8月10日16:39:40
+     * 隐藏帮助菜单 sle
+     * 2023年8月10日16:39:40
      */
 //    menuBar.add(helpMenuItem);
     return menuBar;
@@ -957,7 +975,7 @@ public class WeasisWin {
     toolMenu.addPopupMenuListener();
     menuView.add(toolMenu);
 
-    DynamicMenu explorerMenu = new DynamicMenu("Explorer") { // NON-NLS
+    DynamicMenu explorerMenu = new DynamicMenu(Messages.getString("WeasisWin.button")) { // NON-NLS
 
           @Override
           public void popupMenuWillBecomeVisible() {
@@ -970,27 +988,36 @@ public class WeasisWin {
 
   private void buildMenuFile() {
     menuFile.removeAll();
-    DynamicMenu openMenu =
-        new DynamicMenu(Messages.getString("WeasisWin.open")) {
 
-          @Override
-          public void popupMenuWillBecomeVisible() {
-            buildOpenSubMenu(this);
-          }
-        };
-    openMenu.addPopupMenuListener();
-    menuFile.add(openMenu);
+    /**
+     * 隐藏右上角 打开下拉菜单 sle
+     * 2023年8月11日15:03:44
+     */
+//    DynamicMenu openMenu =
+//        new DynamicMenu(Messages.getString("WeasisWin.open")) {
+//
+//          @Override
+//          public void popupMenuWillBecomeVisible() {
+//            buildOpenSubMenu(this);
+//          }
+//        };
+//    openMenu.addPopupMenuListener();
+//    menuFile.add(openMenu);
 
-    DynamicMenu importMenu =
-        new DynamicMenu(Messages.getString("WeasisWin.import")) {
-
-          @Override
-          public void popupMenuWillBecomeVisible() {
-            buildImportSubMenu(this);
-          }
-        };
-    importMenu.addPopupMenuListener();
-    menuFile.add(importMenu);
+    /**
+     * 隐藏DICOM导入 --顶部文件菜单栏 sle 
+     * 2023年8月11日10:58:30
+     */
+//    DynamicMenu importMenu =
+//        new DynamicMenu(Messages.getString("WeasisWin.import")) {
+//
+//          @Override
+//          public void popupMenuWillBecomeVisible() {
+//            buildImportSubMenu(this);
+//          }
+//        };
+//    importMenu.addPopupMenuListener();
+//    menuFile.add(importMenu);
 
     DynamicMenu exportMenu =
         new DynamicMenu(Messages.getString("WeasisWin.export")) {
@@ -1003,11 +1030,12 @@ public class WeasisWin {
     exportMenu.addPopupMenuListener();
 
     menuFile.add(exportMenu);
-    menuFile.add(new JSeparator());
+
     /**
-     * 隐藏打印
-     * sle 2023年8月10日16:58:27
+     * 左上角下拉菜单 隐藏打印 sle
+     * 2023年8月10日16:58:27
      */
+//    menuFile.add(new JSeparator());
 //    DynamicMenu printMenu =
 //        new DynamicMenu(Messages.getString("WeasisWin.print")) {
 //

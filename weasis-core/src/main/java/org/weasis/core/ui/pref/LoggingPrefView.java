@@ -28,6 +28,10 @@ import org.weasis.core.api.service.BundleTools;
 import org.weasis.core.api.service.WProperties;
 import org.weasis.core.util.StringUtil;
 
+/**
+ * 设置-日志 sle 添加注释
+ * 2023年5月15日11:23:20
+ */
 public class LoggingPrefView extends AbstractItemDialogPage {
   private static final Logger LOGGER = LoggerFactory.getLogger(LoggingPrefView.class);
 
@@ -49,6 +53,10 @@ public class LoggingPrefView extends AbstractItemDialogPage {
   private final JComboBox<String> comboBoxStackLimit =
       new JComboBox<>(new String[] {"", "0", "1", "3", "5", "10", "20", "50", "100"}); // NON-NLS
 
+  /**
+   * 设置-日志 构造函数 sle 添加注释
+   * 2023年5月15日11:23:20
+   */
   public LoggingPrefView() {
     super(PAGE_NAME, 115);
 

@@ -117,7 +117,7 @@ public class View2dContainer extends DicomViewerPlugin implements PropertyChange
           "layout_histo", // NON-NLS
           Messages.getString("View2dContainer.histogram"));
   // Unmodifiable list of the default layout elements
-  public static final List<GridBagLayoutModel> DEFAULT_LAYOUT_LIST = InitLayoutList();
+  public static final List<GridBagLayoutModel> DEFAULT_LAYOUT_LIST = InitLayoutList(); // 布局列表封装成方法 sle 2023年8月11日09:58:01
 
   // Static tools shared by all the View2dContainer instances, tools are registered when a container
   // is selected
@@ -137,7 +137,7 @@ public class View2dContainer extends DicomViewerPlugin implements PropertyChange
   public View2dContainer(
       GridBagLayoutModel layoutModel, String uid, String pluginName, Icon icon, String tooltips) {
     super(EventManager.getInstance(), layoutModel, uid, pluginName, icon, tooltips);
-    setSynchView(SynchView.DEFAULT_STACK);
+    setSynchView(SynchView.DEFAULT_TILE); // 修改默认同步方式 sle 2023年8月11日09:27:37
     addComponentListener(
         new ComponentAdapter() {
 
@@ -167,10 +167,10 @@ public class View2dContainer extends DicomViewerPlugin implements PropertyChange
       String componentName = InsertableUtil.getCName(this.getClass());
       String key = "enable"; // NON-NLS
 
-      /*
-      隐藏DICOM导入 --2D查看器
-      sle 2023年6月21日10:24:42
-       */
+/**
+ *  隐藏DICOM导入 --2D查看器 sle
+ *  2023年6月21日10:24:42
+ */
 //      if (InsertableUtil.getBooleanProperty(
 //          BundleTools.SYSTEM_PREFERENCES,
 //          bundleName,
@@ -297,8 +297,8 @@ public class View2dContainer extends DicomViewerPlugin implements PropertyChange
         TOOLBARS.add(new CineToolBar(80));
       }
       /**
-       * 顶部打印栏
-       * sle 2023年7月19日16:13:39
+       * 顶部打印栏 sle
+       * 2023年7月19日16:13:39
        */
       if (InsertableUtil.getBooleanProperty(
               BundleTools.SYSTEM_PREFERENCES,

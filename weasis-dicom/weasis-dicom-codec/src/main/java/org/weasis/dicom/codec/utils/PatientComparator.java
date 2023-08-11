@@ -9,6 +9,7 @@
  */
 package org.weasis.dicom.codec.utils;
 
+import java.io.UnsupportedEncodingException;
 import java.time.LocalDate;
 import java.util.Optional;
 import javax.xml.stream.XMLStreamReader;
@@ -33,7 +34,15 @@ public class PatientComparator {
   public PatientComparator(Attributes item) {
     setPatientId(item.getString(Tag.PatientID));
     setIssuerOfPatientID(item.getString(Tag.IssuerOfPatientID));
-    setName(item.getString(Tag.PatientName));
+    /**
+     * 新增逻辑，获取值时进行gbk转码，处理中文乱码的情况 sle
+     * 2023年7月5日16:37:28
+     */
+    try {
+      setName(new String(item.getString(Tag.PatientName).getBytes("ISO-8859-1"), "gbk"));
+    } catch (UnsupportedEncodingException e) {
+      setName(item.getString(Tag.PatientName));
+    }
     setSex(item.getString(Tag.PatientSex));
     setBirthdate(item.getString(Tag.PatientBirthDate));
   }

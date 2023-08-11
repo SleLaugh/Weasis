@@ -877,27 +877,6 @@
       <p format="切片位置: $V" index="4">SliceLocation</p>
     </corner>
   </modality>
-  <modality name="XA">
-    <corner name="TOP_LEFT">
-      <p format="" index="1">PatientName</p>
-      <p format="" index="2">PatientBirthDate</p>
-      <p format="影像号: $V" index="3">PatientID</p>
-      <p format="" index="4">PatientAge</p>
-    </corner>
-    <corner name="TOP_RIGHT">
-      <p format="机构名称: $V" index="1">InstitutionName</p>
-      <p format="检查ID: $V" index="2">StudyID</p>
-      <p format="检查号: $V" index="3">AccessionNumber</p>
-      <p format="采集日期: $V" index="4">AcquisitionDate</p>
-      <p format="采集时间: $V" index="5">AcquisitionTime</p>
-    </corner>
-    <corner name="BOTTOM_RIGHT">
-      <p format="序列号: $V" index="1">SeriesNumber</p>
-      <p format="序列描述: $V" index="2">SeriesDescription</p>
-      <p format="切片厚度: $V" index="3">SliceThickness</p>
-      <p format="切片位置: $V" index="4">SliceLocation</p>
-    </corner>
-  </modality>
   <modality name="XC">
     <corner name="TOP_LEFT">
       <p format="" index="1">PatientName</p>

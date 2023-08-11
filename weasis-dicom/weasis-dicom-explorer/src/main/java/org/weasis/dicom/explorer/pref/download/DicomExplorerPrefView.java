@@ -29,6 +29,10 @@ import org.weasis.dicom.explorer.DicomSorter.SortingTime;
 import org.weasis.dicom.explorer.HangingProtocols.OpeningViewer;
 import org.weasis.dicom.explorer.Messages;
 
+/**
+ * 设置-DICOM浏览器 sle 添加注释
+ * 2023年5月15日14:20:57
+ */
 public class DicomExplorerPrefView extends AbstractItemDialogPage {
   public static final String DOWNLOAD_IMMEDIATELY = "weasis.download.immediately";
   public static final String DOWNLOAD_OPEN_MODE = "weasis.download.open.view.mode";
@@ -43,6 +47,10 @@ public class DicomExplorerPrefView extends AbstractItemDialogPage {
   private final JComboBox<SortingTime> studyDateSortingComboBox =
       new JComboBox<>(SortingTime.values());
 
+  /**
+   * 设置-DICOM浏览器 构造函数 sle 添加注释
+   * 2023年5月15日14:20:57
+   */
   public DicomExplorerPrefView() {
     super(Messages.getString("DicomExplorer.title"), 607);
 

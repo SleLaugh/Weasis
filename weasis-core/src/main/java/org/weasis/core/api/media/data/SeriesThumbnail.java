@@ -76,7 +76,11 @@ public class SeriesThumbnail extends Thumbnail
   private static final Composite TRANSPARENT_COMPOSITE =
       AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.2f);
 
-  private MediaSeries.MEDIA_POSITION mediaPosition = MediaSeries.MEDIA_POSITION.MIDDLE;
+  /**
+   * 左侧缩略图的位置，由随机改为第一章
+   * sle 2023年8月2日17:51:39
+   */
+  private MediaSeries.MEDIA_POSITION mediaPosition = MediaSeries.MEDIA_POSITION.FIRST;
 
   private final Border thumbnailBorder = new EmptyBorder(5, 5, 0, 5);
 

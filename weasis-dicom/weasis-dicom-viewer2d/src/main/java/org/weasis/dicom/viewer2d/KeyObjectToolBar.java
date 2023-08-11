@@ -126,6 +126,7 @@ public class KeyObjectToolBar extends WtoolBar {
               add(koSelectionButton);
 
               JButton koEditSelectionBtn = new JButton(KO_EDIT_SELECTION_ICON);
+              koEditSelectionBtn.setToolTipText(Messages.getString("KeyObjectToolBar.edit"));
               b.registerActionState(koEditSelectionBtn);
               koEditSelectionBtn.addActionListener(
                   e -> editKo(evtMgr, b, evtMgr.getAction(ActionW.KO_FILTER).orElse(null)));

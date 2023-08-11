@@ -13,6 +13,11 @@ import org.weasis.core.Messages;
 import java.awt.Font;
 import javax.swing.UIManager;
 
+/**
+ * 文字枚举 sle 添加注释
+ * 2023年8月11日15:09:43
+ * 添加中文描述 sle
+ */
 public enum FontItem {
   H1_SEMIBOLD("h1.font",Messages.getString("Font.h1_semibold")),
   H1("h1.regular.font", Messages.getString("Font.h1")),

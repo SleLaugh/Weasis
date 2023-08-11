@@ -14,7 +14,11 @@ import org.weasis.core.api.media.data.TagView;
 
 public class CornerInfoData {
 
-  public static final int ELEMENT_NUMBER = 7;
+  /**
+   * 方位最大行数由7改为20 sle 2023年8月11日10:44:46
+   * 2023年5月25日11:34:05
+   */
+  public static final int ELEMENT_NUMBER = 20;
   private final CornerDisplay corner;
   private final TagView[] infos;
 

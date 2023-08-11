@@ -99,7 +99,11 @@ public class ViewerToolBar<E extends ImageElement> extends WtoolBar implements A
 
     if ((activeMouse & InputEvent.BUTTON1_DOWN_MASK) == InputEvent.BUTTON1_DOWN_MASK) {
       mouseLeft = buildMouseButton(actions, MouseActions.T_LEFT);
-      // 隐藏鼠标左键快捷键的提示，因为会和输入法切换重叠 sle 2023年8月10日11:12:11
+/**
+ * 隐藏鼠标左键快捷键的提示，因为会和输入法切换重叠 sle
+ * 2023年8月10日11:12:11
+ */
+
 //      mouseLeft.setToolTipText(
 //          Messages.getString("ViewerToolBar.left_change")
 //              + " "
@@ -363,7 +367,7 @@ public class ViewerToolBar<E extends ImageElement> extends WtoolBar implements A
   private DropDownButton buildSynchButton() {
     GroupPopup menuLut = null;
     ComboItemListener<SynchView> synch = eventManager.getAction(ActionW.SYNCH).orElse(null);
-    SynchView synchView = SynchView.DEFAULT_STACK;
+    SynchView synchView = SynchView.DEFAULT_TILE; // 修改默认同步方式 sle 2023年8月11日09:27:37
     if (synch != null) {
       if (synch.getSelectedItem() instanceof SynchView sel) {
         synchView = sel;

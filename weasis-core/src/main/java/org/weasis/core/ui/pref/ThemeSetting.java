@@ -39,6 +39,10 @@ import org.weasis.core.api.service.BundleTools;
 import org.weasis.core.api.service.WProperties;
 import org.weasis.core.util.StringUtil;
 
+/**
+ * 设置-外观 sle 添加注释
+ * 2023年5月15日11:21:59
+ */
 public class ThemeSetting extends AbstractItemDialogPage {
   private static final Logger LOGGER = LoggerFactory.getLogger(ThemeSetting.class);
 
@@ -65,6 +69,10 @@ public class ThemeSetting extends AbstractItemDialogPage {
     }
   }
 
+  /**
+   * 设置-外观 构造函数 sle 添加注释
+   * 2023年5月15日11:21:59
+   */
   public ThemeSetting() {
     super(PAGE_NAME, 102);
     setList(comboBoxTheme, UIManager.getInstalledLookAndFeels());

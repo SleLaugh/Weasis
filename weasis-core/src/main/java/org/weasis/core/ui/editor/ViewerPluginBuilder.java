@@ -101,6 +101,10 @@ public class ViewerPluginBuilder {
     openSequenceInPlugin(factory, list, model, compareEntryToBuildNewViewer, removeOldSeries);
   }
 
+  /**
+   * 在新窗体打开 sle 添加注释
+   * 2023年5月10日15:53:15
+   */
   public static void openSequenceInPlugin(
       SeriesViewerFactory factory,
       List<? extends MediaSeries<? extends MediaElement>> series,

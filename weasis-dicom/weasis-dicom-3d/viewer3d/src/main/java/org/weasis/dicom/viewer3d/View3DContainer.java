@@ -447,8 +447,12 @@ public class View3DContainer extends DicomViewerPlugin implements PropertyChange
     return null;
   }
 
+  /**
+   * 由 protected 改为 public，用来设置打开时的布局 sle
+   * 2023年8月11日09:43:24
+   */
   @Override
-  protected synchronized void setLayoutModel(GridBagLayoutModel layoutModel) {
+  public synchronized void setLayoutModel(GridBagLayoutModel layoutModel) {
     super.setLayoutModel(layoutModel);
 
     DicomVolTexture curVolTexture = getVolTexture();

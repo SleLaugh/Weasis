@@ -40,13 +40,22 @@ import org.weasis.core.ui.model.utils.ImageStatistics;
 import org.weasis.core.ui.model.utils.bean.Measurement;
 import org.weasis.core.util.StringUtil;
 
+/**
+ * 设置-图像上的标签 sle 添加注释
+ * 2023年5月12日14:52:58
+ */
 public class LabelsPrefView extends AbstractItemDialogPage {
+
   private final JPanel panelList = new JPanel();
   private final JComboBox<Graphic> comboBoxTool;
   private final JComboBox<FontItem> fontItemJComboBox;
   private final ViewSetting viewSetting;
   private final Map<JCheckBox, Measurement> map;
 
+  /**
+   * 设置-图像上的标签 构造函数 sle
+   * 2023年5月12日15:54:51
+   */
   public LabelsPrefView() {
     super(MeasureTool.LABEL_PREF_NAME, 510);
     this.map = new HashMap<>(ImageStatistics.ALL_MEASUREMENTS.length);

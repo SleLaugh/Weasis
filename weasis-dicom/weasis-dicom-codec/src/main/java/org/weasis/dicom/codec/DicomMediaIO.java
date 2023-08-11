@@ -66,6 +66,10 @@ import org.weasis.dicom.codec.utils.DicomMediaUtils;
 import org.weasis.dicom.codec.utils.PatientComparator;
 import org.weasis.opencv.data.PlanarImage;
 
+/**
+ * DICOM影像原始信息 sle
+ * 2023年7月5日14:57:24
+ */
 public class DicomMediaIO implements DcmMediaReader {
 
   private static final Logger LOGGER = LoggerFactory.getLogger(DicomMediaIO.class);
@@ -271,14 +275,30 @@ public class DicomMediaIO implements DcmMediaReader {
     this.fileCache = new FileCache(this);
   }
 
+  /**
+   * 通过文件创建DICOM实体 sle
+   * 2023年7月5日14:58:06
+   * @param source
+   */
   public DicomMediaIO(File source) {
     this(Objects.requireNonNull(source).toURI());
   }
 
+  /**
+   * 通过路径创建DICOM实体 sle
+   * 2023年7月5日14:58:23
+   * @param path
+   */
   public DicomMediaIO(Path path) {
     this(Objects.requireNonNull(path).toUri());
   }
 
+  /**
+   * 通过xml创建DICOM实体（不确定） sle
+   * 2023年7月5日14:58:33
+   * @param dcmItems
+   * @throws URISyntaxException
+   */
   public DicomMediaIO(Attributes dcmItems) throws URISyntaxException {
     this(
         new URI(
@@ -315,6 +335,11 @@ public class DicomMediaIO implements DcmMediaReader {
     return dcmMetadata != null && "data".equals(uri.getScheme()); // NON-NLS
   }
 
+  /**
+   * 读取DICOM TAG值 sle
+   * 2023年7月5日15:02:36
+   * @return
+   */
   public synchronized boolean isReadableDicom() {
     if (UNREADABLE.equals(mimeType)) {
       // Return true only to display the error message in the view
@@ -421,6 +446,11 @@ public class DicomMediaIO implements DcmMediaReader {
     return tags.entrySet().iterator();
   }
 
+  /**
+   * 写入tag值 sle
+   * 2023年7月5日15:09:17
+   * @param md
+   */
   private void writeInstanceTags(DicomMetaData md) {
     if (tags.size() > 0 || md == null || md.getDicomObject() == null) {
       return;

@@ -110,7 +110,12 @@ public class DicomExplorer extends PluginTool implements DataExplorerView, Serie
   private final HashMap<MediaSeriesGroup, List<StudyPane>> patient2study = new HashMap<>();
   private final HashMap<MediaSeriesGroup, List<SeriesPane>> study2series = new HashMap<>();
   private final JScrollPane thumbnailView = new JScrollPane();
-  private final LoadingPanel loadingPanel = new LoadingPanel();
+
+  /**
+   *  加载影像的组件 sle 添加注释
+   *  2023年8月11日11:32:22
+   */
+//  private final LoadingPanel loadingPanel = new LoadingPanel(); // 隐藏加载影像 sle 2023年8月11日11:30:33
   private final SeriesSelectionModel selectionList;
 
   private final DicomModel model;
@@ -1030,34 +1035,34 @@ public class DicomExplorer extends PluginTool implements DataExplorerView, Serie
       setLayout(new MigLayout("fillx, ins 0", "[grow,fill]", "[]rel[grow,fill]unrel[]")); // NON-NLS
       add(getMainPanel(), "");
       add(thumbnailView, "newline, top"); // NON-NLS
-      add(loadingPanel, "newline,"); // NON-NLS
+//      add(loadingPanel, "newline,"); // NON-NLS
     } else {
       setLayout(new MigLayout("fillx, ins 0", "[right]rel[grow,fill]")); // NON-NLS
-      add(GuiUtils.getVerticalBoxLayoutPanel(getMainPanel(), loadingPanel));
+//      add(GuiUtils.getVerticalBoxLayoutPanel(getMainPanel(), loadingPanel));
       add(thumbnailView);
     }
     selectedPatient.refreshLayout();
   }
 
   public synchronized void addTaskToGlobalProgression(final ExplorerTask task) {
-    GuiExecutor.instance()
-        .invokeAndWait(
-            () -> {
-              loadingPanel.addTask(task);
-              revalidate();
-              repaint();
-            });
+//    GuiExecutor.instance()
+//        .invokeAndWait(
+//            () -> {
+//              loadingPanel.addTask(task);
+//              revalidate();
+//              repaint();
+//            });
   }
 
   public synchronized void removeTaskToGlobalProgression(final ExplorerTask task) {
-    GuiExecutor.instance()
-        .invokeAndWait(
-            () -> {
-              if (loadingPanel.removeTask(task)) {
-                revalidate();
-                repaint();
-              }
-            });
+//    GuiExecutor.instance()
+//        .invokeAndWait(
+//            () -> {
+//              if (loadingPanel.removeTask(task)) {
+//                revalidate();
+//                repaint();
+//              }
+//            });
   }
 
   public static SeriesThumbnail createThumbnail(

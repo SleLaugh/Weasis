@@ -36,6 +36,10 @@ import org.weasis.core.api.service.WProperties;
 import org.weasis.core.api.util.LocalUtil;
 import org.weasis.core.util.StringUtil;
 
+/**
+ * 设置-代理服务器 sle 添加注释
+ * 2023年5月15日11:22:55
+ */
 public class ProxyPrefView extends AbstractItemDialogPage {
   private static final Logger LOGGER = LoggerFactory.getLogger(ProxyPrefView.class);
 
@@ -91,6 +95,10 @@ public class ProxyPrefView extends AbstractItemDialogPage {
   private final JTextField proxyUser = new JTextField(15);
   private final JPasswordField proxyPass = new JPasswordField(15);
 
+  /**
+   * 设置-代理服务器 构造函数 sle 添加注释
+   * 2023年5月15日11:22:55
+   */
   public ProxyPrefView() {
     super(Messages.getString("ProxyPrefView.proxy"), 110);
     initialize();

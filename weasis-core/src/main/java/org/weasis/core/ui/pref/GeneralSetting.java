@@ -51,7 +51,11 @@ public class GeneralSetting extends AbstractItemDialogPage {
             new LanguageSetting(),
             new ThemeSetting(),
             new ScreenPrefView(),
-            new ProxyPrefView(),
+/**
+ * 隐藏代理服务器 sle
+ * 2023年6月21日09:39:49
+ */
+//            new ProxyPrefView(),
             new LoggingPrefView());
     childPages.forEach(p -> addSubPage(p, a -> dialog.showPage(p.getTitle()), menuPanel));
   }

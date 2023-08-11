@@ -19,6 +19,10 @@ import org.weasis.core.api.util.ResourceUtil;
 import org.weasis.core.api.util.ResourceUtil.ActionIcon;
 import org.weasis.core.ui.editor.image.SynchData.Mode;
 
+/**
+ * 同步方式 sle 添加注释
+ * 2023年5月8日16:04:38
+ */
 public class SynchView implements GUIEntry {
   public static final SynchView NONE =
       new SynchView(

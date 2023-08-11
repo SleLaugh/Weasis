@@ -122,6 +122,10 @@ public class EventManager extends ImageViewerEventManager<DicomImageElement>
     implements ActionListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(EventManager.class);
 
+  /**
+   * 所有的OGSI命令方法 sle
+   * 2023年5月11日09:27:59
+   */
   public static final List<String> functions =
       Collections.unmodifiableList(
           Arrays.asList(
@@ -181,7 +185,7 @@ public class EventManager extends ImageViewerEventManager<DicomImageElement>
         newLayoutAction(View2dContainer.DEFAULT_LAYOUT_LIST.toArray(new GridBagLayoutModel[0])));
     setAction(newSynchAction(View2dContainer.DEFAULT_SYNCH_LIST.toArray(new SynchView[0])));
     getAction(ActionW.SYNCH)
-        .ifPresent(a -> a.setSelectedItemWithoutTriggerAction(SynchView.DEFAULT_STACK));
+        .ifPresent(a -> a.setSelectedItemWithoutTriggerAction(SynchView.DEFAULT_TILE)); // 修改默认同步方式 sle 2023年8月11日09:27:37
     setAction(newMeasurementAction(MeasureToolBar.measureGraphicList.toArray(new Graphic[0])));
     setAction(newDrawAction(MeasureToolBar.drawGraphicList.toArray(new Graphic[0])));
     setAction(newSpatialUnit(Unit.values()));

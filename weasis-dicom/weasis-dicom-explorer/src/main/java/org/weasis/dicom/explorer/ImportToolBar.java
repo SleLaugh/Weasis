@@ -30,6 +30,10 @@ import org.weasis.core.util.StringUtil;
 import org.weasis.dicom.explorer.HangingProtocols.OpeningViewer;
 import org.weasis.dicom.explorer.wado.LoadSeries;
 
+/**
+ * 打开影像 sle 添加注释
+ * 2023年6月21日10:36:45
+ */
 public class ImportToolBar extends WtoolBar {
   private static final Logger LOGGER = LoggerFactory.getLogger(ImportToolBar.class);
 

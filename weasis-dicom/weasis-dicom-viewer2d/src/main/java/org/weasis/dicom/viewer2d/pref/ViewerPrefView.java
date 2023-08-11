@@ -53,6 +53,10 @@ import org.weasis.dicom.viewer2d.PRManager;
 import org.weasis.dicom.viewer2d.View2dContainer;
 import org.weasis.dicom.viewer2d.View2dFactory;
 
+/**
+ * 设置-2D查看器 sle 添加注释
+ * 2023年5月15日14:17:35
+ */
 public class ViewerPrefView extends AbstractItemDialogPage {
   private final Hashtable<Integer, JLabel> labels = new Hashtable<>();
   private final List<Feature<? extends SliderChangeListener>> actions =
@@ -66,6 +70,10 @@ public class ViewerPrefView extends AbstractItemDialogPage {
   private JCheckBox checkBoxApplyPR;
   private final JButton overlayColor;
 
+  /**
+   * 设置-2D查看器 构造函数 sle 添加注释
+   * 2023年5月15日14:17:35
+   */
   public ViewerPrefView() {
     super(View2dFactory.NAME, 501);
     this.overlayColor = new JButton(ResourceUtil.getIcon(ActionIcon.PIPETTE));
