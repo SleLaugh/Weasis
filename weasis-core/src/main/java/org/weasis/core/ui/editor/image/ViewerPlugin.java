@@ -37,6 +37,7 @@ import org.weasis.core.api.explorer.ObservableEvent;
 import org.weasis.core.api.gui.util.GuiExecutor;
 import org.weasis.core.api.media.data.MediaElement;
 import org.weasis.core.api.media.data.MediaSeriesGroup;
+import org.weasis.core.ui.docking.DockableTool;
 import org.weasis.core.ui.docking.UIManager;
 import org.weasis.core.ui.editor.SeriesViewer;
 import org.weasis.core.ui.editor.ViewerPluginBuilder;
@@ -76,8 +77,16 @@ public abstract class ViewerPlugin<E extends MediaElement> extends JPanel
         new CCloseAction(UIManager.DOCKING_CONTROL) {
           @Override
           public void close(CDockable dockable) {
+            UIManager.DOCKING_CONTROL.addVetoFocusListener(UIManager.DOCKING_VETO_FOCUS);
             super.close(dockable);
+            UIManager.DOCKING_CONTROL.removeVetoFocusListener(UIManager.DOCKING_VETO_FOCUS);
             if (dockable.getFocusComponent() instanceof SeriesViewer<?> seriesViewer) {
+              List<DockableTool> oldTool = seriesViewer.getToolPanel();
+              if (oldTool != null) {
+                for (DockableTool p : oldTool) {
+                  p.closeDockable();
+                }
+              }
               seriesViewer.close();
             }
             Dockable prevDockable =
@@ -92,7 +101,7 @@ public abstract class ViewerPlugin<E extends MediaElement> extends JPanel
                   && defaultCommonDockable.getDockable()
                       instanceof AbstractCDockable abstractCDockable) {
                 if (abstractCDockable.getFocusComponent() instanceof SeriesViewer<?> plugin) {
-                  UIManager.updateTools(plugin, plugin, true);
+                  UIManager.updateTools(null, plugin, true);
                 }
                 abstractCDockable.toFront();
               }
@@ -189,7 +198,10 @@ public abstract class ViewerPlugin<E extends MediaElement> extends JPanel
                 UIManager.MAIN_AREA.add(getDockable());
                 dockable.setDefaultLocation(
                     ExtendedMode.NORMALIZED, CLocation.working(UIManager.MAIN_AREA).stack());
+                UIManager.DOCKING_CONTROL.addVetoFocusListener(UIManager.DOCKING_VETO_FOCUS);
                 dockable.setVisible(true);
+                UIManager.DOCKING_CONTROL.removeVetoFocusListener(UIManager.DOCKING_VETO_FOCUS);
+                setSelectedAndGetFocus();
               }
             });
   }

@@ -45,11 +45,11 @@ public class MprPrefView extends AbstractItemDialogPage {
 
   private void initGUI() {
     EventManager eventManager = EventManager.getInstance();
-    JLabel lblMode = new JLabel(Messages.getString("morPref.auto_center_axes") + StringUtil.COLON);
+    JLabel lblMode = new JLabel(Messages.getString("auto.center") + StringUtil.COLON);
 
-    comboBox3DCursorMode.addItem(Messages.getString("morPref.never"));
-    comboBox3DCursorMode.addItem(Messages.getString("morPref.center_is_hidden"));
-    comboBox3DCursorMode.addItem(Messages.getString("morPref.always"));
+    comboBox3DCursorMode.addItem(Messages.getString("never"));
+    comboBox3DCursorMode.addItem(Messages.getString("only.center.hidden"));
+    comboBox3DCursorMode.addItem(Messages.getString("always"));
 
     int mode = eventManager.getOptions().getIntProperty(View2d.P_CROSSHAIR_MODE, 1);
     if (mode < 0 && mode >= comboBox3DCursorMode.getModel().getSize()) {

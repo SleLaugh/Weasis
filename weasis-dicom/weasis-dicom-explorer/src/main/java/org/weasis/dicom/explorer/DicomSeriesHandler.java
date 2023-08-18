@@ -27,7 +27,6 @@ import org.weasis.core.api.media.data.MediaSeriesGroup;
 import org.weasis.core.api.media.data.Series;
 import org.weasis.core.api.media.data.TagW;
 import org.weasis.core.ui.docking.UIManager;
-import org.weasis.core.ui.editor.DefaultMimeAppFactory;
 import org.weasis.core.ui.editor.SeriesViewerFactory;
 import org.weasis.core.ui.editor.ViewerPluginBuilder;
 import org.weasis.core.ui.editor.image.SequenceHandler;
@@ -101,14 +100,12 @@ public class DicomSeriesHandler extends SequenceHandler {
 
               String mime = seq.getMimeType();
               plugin = UIManager.getViewerFactory(mime);
-              if (plugin == null) {
-                plugin = DefaultMimeAppFactory.getInstance();
+              if (plugin != null) {
+                ArrayList<MediaSeries<MediaElement>> list = new ArrayList<>(1);
+                list.add(seq);
+                ViewerPluginBuilder builder = new ViewerPluginBuilder(plugin, list, model, props);
+                ViewerPluginBuilder.openSequenceInPlugin(builder);
               }
-
-              ArrayList<MediaSeries<MediaElement>> list = new ArrayList<>(1);
-              list.add(seq);
-              ViewerPluginBuilder builder = new ViewerPluginBuilder(plugin, list, model, props);
-              ViewerPluginBuilder.openSequenceInPlugin(builder);
             }
             return false;
           }

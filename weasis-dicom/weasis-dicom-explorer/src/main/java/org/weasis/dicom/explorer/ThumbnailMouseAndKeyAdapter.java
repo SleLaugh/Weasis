@@ -44,7 +44,6 @@ import org.weasis.core.api.media.data.TagW;
 import org.weasis.core.api.util.ResourceUtil;
 import org.weasis.core.api.util.ResourceUtil.ActionIcon;
 import org.weasis.core.ui.docking.UIManager;
-import org.weasis.core.ui.editor.DefaultMimeAppFactory;
 import org.weasis.core.ui.editor.SeriesViewer;
 import org.weasis.core.ui.editor.SeriesViewerFactory;
 import org.weasis.core.ui.editor.ViewerPluginBuilder;
@@ -80,15 +79,12 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
 
       String mime = series.getMimeType();
       SeriesViewerFactory plugin = UIManager.getViewerFactory(mime);
-      if (plugin == null) {
-        plugin = DefaultMimeAppFactory.getInstance();
+      if (plugin != null) {
+        ArrayList<MediaSeries<MediaElement>> list = new ArrayList<>(1);
+        list.add(series);
+        ViewerPluginBuilder builder = new ViewerPluginBuilder(plugin, list, dicomModel, props);
+        ViewerPluginBuilder.openSequenceInPlugin(builder);
       }
-
-      ArrayList<MediaSeries<MediaElement>> list = new ArrayList<>(1);
-      list.add(series);
-      ViewerPluginBuilder builder = new ViewerPluginBuilder(plugin, list, dicomModel, props);
-      ViewerPluginBuilder.openSequenceInPlugin(builder);
-
       selList.setOpeningSeries(false);
     }
   }

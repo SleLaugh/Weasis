@@ -1,5 +1,22 @@
 # Changelog
 
+## [v4.1.2](https://github.com/nroduit/Weasis/tree/v4.1.2) (2023-06-16)
+
+[Full Changelog](https://github.com/nroduit/Weasis/compare/v4.1.1...v4.1.2)
+
+**Fixed bugs:**
+
+- Languages can no longer be changed from the UI [\#426](https://github.com/nroduit/Weasis/issues/426)
+- Application freezes when 3D view is closed [\#425](https://github.com/nroduit/Weasis/issues/425)
+- Value of shininess is out of range [\#423](https://github.com/nroduit/Weasis/issues/423)
+- Cannot activate or deactivate OpenGL from Preferences  [\#421](https://github.com/nroduit/Weasis/issues/421)
+- Can't uninstall package weasis\_4.0.3-1\_amd64 [\#419](https://github.com/nroduit/Weasis/issues/419)
+- Can't load 3D CT scan with odd size [\#414](https://github.com/nroduit/Weasis/issues/414)
+
+**Closed issues:**
+
+- PROBLEM: Weasis can't find my graphic card [\#420](https://github.com/nroduit/Weasis/issues/420)
+
 ## [v4.1.1](https://github.com/nroduit/Weasis/tree/v4.1.1) (2023-05-22)
 
 [Full Changelog](https://github.com/nroduit/Weasis/compare/v4.1.1...v4.1.0)
@@ -9,6 +26,7 @@
 - The tools associated with a viewer are not updated when closing a tab [\#417](https://github.com/nroduit/Weasis/issues/417)
 - MPR and 3D buttons are sometimes disabled after loading images [\#416](https://github.com/nroduit/Weasis/issues/416)
 - The program closes with an error when opening any file [\#410](https://github.com/nroduit/Weasis/issues/410)
+- SUVbw value are different for DRO Washington Image than required per QIBA profile [\#399](https://github.com/nroduit/Weasis/issues/399)
 
 **Closed issues:**
 
@@ -46,7 +64,6 @@
 - LUT \(black/white colour scales\) of some plain radiographs becomes inverted after upgrading to Weasis 4.0.3 [\#372](https://github.com/nroduit/Weasis/issues/372)
 - Viewer tabs behavior when opening studies via DICOM get [\#357](https://github.com/nroduit/Weasis/issues/357)
 - A corrupted DICOM file crashes Weasis [\#350](https://github.com/nroduit/Weasis/issues/350)
-- SUVbw value are different for DRO Washington Image than required per QIBA profile [\#399](https://github.com/nroduit/Weasis/issues/399)
 
 **Closed issues:**
 

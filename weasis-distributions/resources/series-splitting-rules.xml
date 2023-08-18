@@ -119,7 +119,6 @@
       <ScanOptions />
       <RepetitionTime />
       <EchoTime />
-      <InversionTime />
       <FlipAngle />
       <ImageOrientationPlane>
         <conditions type="allOf">
