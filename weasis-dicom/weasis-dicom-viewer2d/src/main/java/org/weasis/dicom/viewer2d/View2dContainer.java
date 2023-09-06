@@ -284,7 +284,7 @@ public class View2dContainer extends DicomViewerPlugin implements PropertyChange
        * 2023年7月19日16:13:39
        */
       if (InsertableUtil.getBooleanProperty(
-              BundleTools.SYSTEM_PREFERENCES,
+              preferences,
               bundleName,
               componentName,
               InsertableUtil.getCName(PrintToolBar.class),

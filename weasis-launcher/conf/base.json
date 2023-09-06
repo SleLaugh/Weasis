@@ -164,6 +164,13 @@
       "category": "FELIX_INSTALL"
     },
     {
+      "code": "felix.auto.start.85",
+      "value": "file:${maven.localRepository}/net/java/dev/jna/jna/${jna.version}/jna-${jna.version}.jar  file:${maven.localRepository}/net/java/dev/jna/jna-platform/${jna.version}/jna-platform-${jna.version}.jar\n file:${maven.localRepository}/org/weasis/dicom/weasis-dicom-ylyy/${app.version}/weasis-dicom-ylyy-${app.version}.jar",
+      "description": "DICOM YLYY AND jna",
+      "type": "A",
+      "category": "FELIX_INSTALL"
+    },
+    {
       "code": "felix.auto.start.100",
       "value": "file:${maven.localRepository}/org/weasis/base/weasis-base-viewer2d/${app.version}/weasis-base-viewer2d-${app.version}.jar",
       "description": "Viewer 2D for standard images",

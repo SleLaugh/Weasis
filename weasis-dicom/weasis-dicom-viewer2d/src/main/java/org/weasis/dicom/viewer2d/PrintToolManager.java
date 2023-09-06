@@ -19,6 +19,7 @@ import org.dcm4che3.net.DimseRSP;
 import org.dcm4che3.net.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.weasis.core.api.gui.util.GuiUtils;
 import org.weasis.core.api.service.BundleTools;
 import org.weasis.dicom.codec.DicomImageElement;
 import org.weasis.dicom.explorer.print.DicomPrint;
@@ -208,14 +209,25 @@ public class PrintToolManager {
      */
     private static void GetConfig() {
         try {
-            localAE = BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.aet", "WEASIS_AE");
-            targetPort = Integer.parseInt(BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.printAEport", "9999"));
-            targetAE = BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.printAEtitle", "EL_PACS_AE");
+            localAE = GuiUtils.getUICore()
+                    .getSystemPreferences()
+                    .getProperty("weasis.aet", "WEASIS_AE"); // NON-NLS
+            targetPort = Integer.parseInt(GuiUtils.getUICore()
+                    .getSystemPreferences()
+                    .getProperty("weasis.printAEport", "9999")
+            );
+            targetAE = GuiUtils.getUICore()
+                    .getSystemPreferences()
+                    .getProperty("weasis.printAEtitle", "EL_PACS_AE"); // NON-NLS
             targetHost = InetAddress.getLocalHost().getHostAddress();
-            ProgramName = BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.printProgramName", "WeasisOpen.exe");
+            ProgramName = GuiUtils.getUICore()
+                    .getSystemPreferences()
+                    .getProperty("weasis.printProgramName", "WeasisOpen.exe");
             // 先去读配置项，如果配置项里没有写路径，那么就获取当前运行目录的上一级目录。
             // 但是配置项默认没有值，也就是一般情况下是读取当前运行目录的上一级目录的
-            ProgramPath = BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.printProgramPath", GetsUpperPath()) + "\\" + ProgramName;
+            ProgramPath = GuiUtils.getUICore()
+                    .getSystemPreferences()
+                    .getProperty("weasis.printProgramPath", GetsUpperPath()) + "\\" + ProgramName;
 
             Initialize = true;
         } catch (Exception e) {
