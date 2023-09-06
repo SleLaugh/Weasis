@@ -310,7 +310,8 @@ public abstract class AcquireMetadataPanel extends JPanel implements TableModelL
     }
 
     public static String[] getValues(String property, String defaultValues) {
-      String values = BundleTools.SYSTEM_PREFERENCES.getProperty(property, defaultValues);
+      String values =
+          GuiUtils.getUICore().getSystemPreferences().getProperty(property, defaultValues);
       if (values == null) {
         return new String[0];
       }

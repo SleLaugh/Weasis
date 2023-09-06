@@ -43,7 +43,6 @@ import org.weasis.core.api.media.data.SeriesThumbnail;
 import org.weasis.core.api.media.data.TagW;
 import org.weasis.core.api.util.ResourceUtil;
 import org.weasis.core.api.util.ResourceUtil.ActionIcon;
-import org.weasis.core.ui.docking.UIManager;
 import org.weasis.core.ui.editor.SeriesViewer;
 import org.weasis.core.ui.editor.SeriesViewerFactory;
 import org.weasis.core.ui.editor.ViewerPluginBuilder;
@@ -78,7 +77,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
       props.put(ViewerPluginBuilder.OPEN_IN_SELECTION, true);
 
       String mime = series.getMimeType();
-      SeriesViewerFactory plugin = UIManager.getViewerFactory(mime);
+      SeriesViewerFactory plugin = GuiUtils.getUICore().getViewerFactory(mime);
       if (plugin != null) {
         ArrayList<MediaSeries<MediaElement>> list = new ArrayList<>(1);
         list.add(series);
@@ -106,7 +105,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
       JPopupMenu popupMenu = new JPopupMenu();
 
       List<SeriesViewerFactory> plugins =
-          UIManager.getViewerFactoryList(new String[] {series.getMimeType()});
+          GuiUtils.getUICore().getViewerFactoryList(new String[] {series.getMimeType()});
       if (!selList.contains(series)) {
         selList.setSelectionInterval(series, series);
       }
@@ -413,7 +412,7 @@ public class ThumbnailMouseAndKeyAdapter extends MouseAdapter implements KeyList
   }
 
   public static SeriesSelectionModel getSeriesSelectionModel() {
-    DataExplorerView explorer = UIManager.getExplorerPlugin(DicomExplorer.NAME);
+    DataExplorerView explorer = GuiUtils.getUICore().getExplorerPlugin(DicomExplorer.NAME);
     return explorer instanceof DicomExplorer model
         ? model.getSelectionList()
         : new SeriesSelectionModel(null);

@@ -30,6 +30,7 @@ import org.weasis.core.api.explorer.model.DataExplorerModel;
 import org.weasis.core.api.gui.util.ActionW;
 import org.weasis.core.api.gui.util.ComboItemListener;
 import org.weasis.core.api.gui.util.FileFormatFilter;
+import org.weasis.core.api.gui.util.GuiUtils;
 import org.weasis.core.api.image.GridBagLayoutModel;
 import org.weasis.core.api.image.LayoutConstraints;
 import org.weasis.core.api.media.MimeInspector;
@@ -39,9 +40,9 @@ import org.weasis.core.api.media.data.MediaReader;
 import org.weasis.core.api.media.data.MediaSeries;
 import org.weasis.core.api.media.data.TagW;
 import org.weasis.core.api.service.BundleTools;
+import org.weasis.core.api.service.WProperties;
 import org.weasis.core.api.util.ResourceUtil;
 import org.weasis.core.api.util.ResourceUtil.OtherIcon;
-import org.weasis.core.ui.docking.UIManager;
 import org.weasis.core.ui.editor.SeriesViewer;
 import org.weasis.core.ui.editor.SeriesViewerFactory;
 import org.weasis.core.ui.editor.ViewerPluginBuilder;
@@ -159,7 +160,7 @@ public class View2dFactory implements SeriesViewerFactory {
 
   public static void closeSeriesViewer(View2dContainer view2dContainer) {
     // Unregister the PropertyChangeListener
-    DataExplorerView dicomView = UIManager.getExplorerPlugin(DicomExplorer.NAME);
+    DataExplorerView dicomView = GuiUtils.getUICore().getExplorerPlugin(DicomExplorer.NAME);
     if (dicomView != null) {
       dicomView.getDataExplorerModel().removePropertyChangeListener(view2dContainer);
     }
@@ -182,7 +183,7 @@ public class View2dFactory implements SeriesViewerFactory {
 
   @Override
   public List<Action> getOpenActions() {
-    DataExplorerView dicomView = UIManager.getExplorerPlugin(DicomExplorer.NAME);
+    DataExplorerView dicomView = GuiUtils.getUICore().getExplorerPlugin(DicomExplorer.NAME);
     if (dicomView == null) {
       return Collections.singletonList(preferencesAction);
     }
@@ -201,8 +202,8 @@ public class View2dFactory implements SeriesViewerFactory {
   }
 
   private static void getOpenImageAction(ActionEvent e) {
-    String directory =
-        BundleTools.LOCAL_UI_PERSISTENCE.getProperty("last.open.dicom.dir", ""); // NON-NLS
+    WProperties localPersistence = GuiUtils.getUICore().getLocalPersistence();
+    String directory = localPersistence.getProperty("last.open.dicom.dir", ""); // NON-NLS
     JFileChooser fileChooser = new JFileChooser(directory);
 
     fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
@@ -214,7 +215,8 @@ public class View2dFactory implements SeriesViewerFactory {
     fileChooser.setFileFilter(filter);
 
     File[] selectedFiles;
-    if (fileChooser.showOpenDialog(UIManager.getApplicationWindow()) != JFileChooser.APPROVE_OPTION
+    if (fileChooser.showOpenDialog(GuiUtils.getUICore().getApplicationWindow())
+            != JFileChooser.APPROVE_OPTION
         || (selectedFiles = fileChooser.getSelectedFiles()) == null) {
       return;
     } else {
@@ -255,8 +257,7 @@ public class View2dFactory implements SeriesViewerFactory {
               JOptionPane.WARNING_MESSAGE);
         }
       }
-      BundleTools.LOCAL_UI_PERSISTENCE.setProperty(
-          "last.open.dicom.dir", selectedFiles[0].getParent());
+      localPersistence.setProperty("last.open.dicom.dir", selectedFiles[0].getParent());
     }
   }
 

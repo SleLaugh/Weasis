@@ -31,7 +31,6 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Executors;
-
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Sequence;
 import org.dcm4che3.data.Tag;
@@ -48,11 +47,11 @@ import org.dcm4che3.net.pdu.PresentationContext;
 import org.dcm4che3.util.UIDUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.weasis.core.api.gui.util.GuiUtils;
 import org.weasis.core.api.image.AffineTransformOp;
 import org.weasis.core.api.image.LayoutConstraints;
 import org.weasis.core.api.image.ZoomOp.Interpolation;
 import org.weasis.core.api.media.data.ImageElement;
-import org.weasis.core.api.service.BundleTools;
 import org.weasis.core.ui.editor.image.ExportImage;
 import org.weasis.core.ui.util.ExportLayout;
 import org.weasis.core.ui.util.ImagePrint;
@@ -278,8 +277,10 @@ public class DicomPrint {
 
     // writeDICOM(new File("/tmp/print.dcm"), dicomImage);
     // 获取Weasis AE的配置信息，如果没有配置则默认为"WEASIS_AE"
-    String weasisAet = BundleTools.SYSTEM_PREFERENCES.getProperty("weasis.aet", "WEASIS_AE"); // NON-NLS
-
+    String weasisAet =
+            GuiUtils.getUICore()
+                    .getSystemPreferences()
+                    .getProperty("weasis.aet", "WEASIS_AE"); // NON-NLS
 
     filmSessionAttrs.setInt(Tag.NumberOfCopies, VR.IS, printOptions.getNumOfCopies());
     filmSessionAttrs.setString(Tag.PrintPriority, VR.CS, printOptions.getPriority(true));
