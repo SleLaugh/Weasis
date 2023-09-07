@@ -982,31 +982,31 @@ public class WeasisWin {
      * 隐藏右上角 打开下拉菜单 sle
      * 2023年8月11日15:03:44
      */
-    DynamicMenu openMenu =
-        new DynamicMenu(Messages.getString("WeasisWin.open")) {
-
-          @Override
-          public void popupMenuWillBecomeVisible() {
-            buildOpenSubMenu(this);
-          }
-        };
-    openMenu.addPopupMenuListener();
-    menuFile.add(openMenu);
+//    DynamicMenu openMenu =
+//        new DynamicMenu(Messages.getString("WeasisWin.open")) {
+//
+//          @Override
+//          public void popupMenuWillBecomeVisible() {
+//            buildOpenSubMenu(this);
+//          }
+//        };
+//    openMenu.addPopupMenuListener();
+//    menuFile.add(openMenu);
 
     /**
      * 隐藏DICOM导入 --顶部文件菜单栏 sle
      * 2023年8月11日10:58:30
      */
-    DynamicMenu importMenu =
-        new DynamicMenu(Messages.getString("WeasisWin.import")) {
-
-          @Override
-          public void popupMenuWillBecomeVisible() {
-            buildImportSubMenu(this);
-          }
-        };
-    importMenu.addPopupMenuListener();
-    menuFile.add(importMenu);
+//    DynamicMenu importMenu =
+//        new DynamicMenu(Messages.getString("WeasisWin.import")) {
+//
+//          @Override
+//          public void popupMenuWillBecomeVisible() {
+//            buildImportSubMenu(this);
+//          }
+//        };
+//    importMenu.addPopupMenuListener();
+//    menuFile.add(importMenu);
 
     DynamicMenu exportMenu =
         new DynamicMenu(Messages.getString("WeasisWin.export")) {

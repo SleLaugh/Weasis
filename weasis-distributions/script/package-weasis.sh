@@ -124,19 +124,18 @@ arc=$(echo "${ARC_OS}" | cut -d'-' -f2-3)
 
 if [ "$machine" = "windows" ] ; then
   INPUT_PATH_UNIX=$(cygpath -u "$INPUT_PATH")
-  OUTPUT_PATH_UNIX=$(cygpath -u "$OUTPUT_PATH")
   RES="${curPath}\resources\\${machine}"
 else
   INPUT_PATH_UNIX="$INPUT_PATH"
-  OUTPUT_PATH_UNIX="$OUTPUT_PATH"
   RES="${curPath}/resources/$machine"
 fi
 
 # Set custom JDK path (>= JDK 11)
 export JAVA_HOME=$JDK_PATH_UNIX
 
-WEASIS_VERSION=$(grep -i "weasis.version=" "${curPath}/build.properties" | sed 's/^.*=//')
-
+#WEASIS_VERSION=$(grep -i "weasis.version=" "${curPath}/build.properties" | sed 's/^.*=//')
+#这段代码有问题，会影像打包失败，因为获取不到值，先暂时写死 sle 2023年9月7日16:35:27
+WEASIS_VERSION="4.2.1"
 echo Machine         = "${machine}"
 echo System          = "${ARC_OS}"
 echo JDK path        = "${JDK_PATH_UNIX}"
@@ -149,7 +148,11 @@ fi
 
 # Specify the required Java version.
 # Only major version is checked. Minor version or any other version string info is left out.
-REQUIRED_TEXT_VERSION=$(grep -i "jdk.version=" "${curPath}/build.properties" | sed 's/^.*=//')
+
+#REQUIRED_TEXT_VERSION=$(grep -i "jdk.version=" "${curPath}/build.properties" | sed 's/^.*=//')
+#这段代码有问题，会影像打包失败，因为获取不到值，先暂时写死 sle 2023年9月7日16:35:27
+REQUIRED_TEXT_VERSION="21"
+
 # Extract major version number for comparisons from the required version string.
 # In order to do that, remove leading "1." if exists, and minor and security versions.
 REQUIRED_MAJOR_VERSION=$(echo $REQUIRED_TEXT_VERSION | sed -e 's/^1\.//' -e 's/\..*//')
@@ -179,6 +182,13 @@ if [ -z "$OUTPUT_PATH" ] ; then
   OUTPUT_PATH_UNIX="$OUTPUT_PATH"
 fi
 
+if [ "$machine" = "windows" ] ; then
+  OUTPUT_PATH_UNIX=$(cygpath -u "$OUTPUT_PATH")
+else
+  OUTPUT_PATH_UNIX="$OUTPUT_PATH"
+fi
+
+echo Output path      = "${OUTPUT_PATH}"
 
 if [ "$machine" = "windows" ] ; then
   INPUT_DIR="$INPUT_PATH\weasis"
@@ -187,7 +197,6 @@ else
   IMAGE_PATH="$OUTPUT_PATH/$NAME"
   INPUT_DIR="$INPUT_PATH_UNIX/weasis"
 fi
-
 WEASIS_CLEAN_VERSION=$(echo "$WEASIS_VERSION" | sed -e 's/"//g' -e 's/-.*//')
 
 
