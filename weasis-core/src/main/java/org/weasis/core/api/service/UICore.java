@@ -221,7 +221,8 @@ public final class UICore {
     systemPreferences.setProperty(key, System.getProperty(key));
 
     if (!systemPreferences.equals(initialSystemPreferences)) {
-      FileUtil.storeProperties(GuiUtils.getUICore().getPropsFile(), systemPreferences, null);
+      // sle 2023年9月8日14:56:47 启动异常，暂时这么写
+      FileUtil.storeProperties(new File(systemPreferences.getProperty("weasis.pref.dir"), "weasis.properties"), systemPreferences, null);
       String remotePrefURL = getPrefServiceUrl();
       if (remotePrefURL != null) {
         try {

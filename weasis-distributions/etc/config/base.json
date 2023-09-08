@@ -304,7 +304,7 @@
     },
     {
       "code": "weasis.name",
-      "value": "Weasis",
+      "value": "影像工作站",
       "description": "Change the name of the application everywhere in UI",
       "type": "AP",
       "category": "LAUNCH"
@@ -346,7 +346,7 @@
     },
     {
       "code": "weasis.show.disclaimer",
-      "value": "true",
+      "value": "false",
       "description": "Show a disclaimer at the first launch of Weasis (requires to be accepted to start the application)",
       "type": "A",
       "JavaType": "BOOLEAN",
@@ -354,7 +354,7 @@
     },
     {
       "code": "weasis.show.release",
-      "value": "true",
+      "value": "false",
       "description": "Show a message when the release has changed",
       "type": "A",
       "JavaType": "BOOLEAN",
@@ -362,7 +362,7 @@
     },
     {
       "code": "weasis.update.release",
-      "value": "true",
+      "value": "false",
       "description": "Show a message when a new release is available",
       "type": "A",
       "JavaType": "BOOLEAN",
@@ -405,7 +405,7 @@
     },
     {
       "code": "weasis.theme",
-      "value": "org.weasis.launcher.FlatWeasisTheme",
+      "value": "com.formdev.flatlaf.FlatIntelliJLaf",
       "description": "FaltLaf Look and feel, see https://www.formdev.com/flatlaf/themes/",
       "type": "F",
       "category": "GENERAL"
@@ -420,7 +420,7 @@
     },
     {
       "code": "locale.lang.code",
-      "value": "en",
+      "value": "zh_CN",
       "description": "Language code (see Java Locale: https://www.oracle.com/java/technologies/javase/jdk20-suported-locales.html). Default value is \"en\".",
       "type": "F",
       "category": "GENERAL"
