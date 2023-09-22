@@ -28,6 +28,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Locale.Category;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Properties;
@@ -37,7 +38,6 @@ import org.slf4j.LoggerFactory;
 import org.weasis.core.api.explorer.DataExplorerView;
 import org.weasis.core.api.gui.util.AppProperties;
 import org.weasis.core.api.gui.util.GuiExecutor;
-import org.weasis.core.api.gui.util.GuiUtils;
 import org.weasis.core.api.gui.util.WinUtil;
 import org.weasis.core.api.media.data.Codec;
 import org.weasis.core.api.media.data.MediaSeries;
@@ -122,12 +122,7 @@ public final class UICore {
       }
     }
     String code = systemPreferences.getProperty(UICore.P_FORMAT_CODE);
-    if (StringUtil.hasLength(code)) {
-      Locale l = LocalUtil.textToLocale(code);
-      if (!l.equals(Locale.getDefault())) {
-        LocalUtil.setLocaleFormat(l);
-      }
-    }
+    Locale.setDefault(Category.FORMAT, LocalUtil.textToLocale(code));
 
     String path = systemPreferences.getProperty("weasis.resources.path");
     ResourceUtil.setResourcePath(path);
@@ -194,21 +189,19 @@ public final class UICore {
   }
 
   public String getConfigServiceUrl() {
-    return GuiUtils.getUICore().getSystemPreferences().getProperty("weasis.config.url");
+    return INSTANCE.getSystemPreferences().getProperty("weasis.config.url");
   }
 
   public String getStatisticServiceUrl() {
-    return GuiUtils.getUICore().getSystemPreferences().getProperty("weasis.stat.url");
+    return INSTANCE.getSystemPreferences().getProperty("weasis.stat.url");
   }
 
   public boolean isLocalSession() {
-    return GuiUtils.getUICore()
-        .getSystemPreferences()
-        .getBooleanProperty("weasis.pref.local.session", false);
+    return INSTANCE.getSystemPreferences().getBooleanProperty("weasis.pref.local.session", false);
   }
 
   public boolean isStoreLocalSession() {
-    return GuiUtils.getUICore()
+    return INSTANCE
         .getSystemPreferences()
         .getBooleanProperty("weasis.pref.store.local.session", false);
   }
@@ -221,8 +214,9 @@ public final class UICore {
     systemPreferences.setProperty(key, System.getProperty(key));
 
     if (!systemPreferences.equals(initialSystemPreferences)) {
-      // sle 2023年9月8日14:56:47 启动异常，暂时这么写
-      FileUtil.storeProperties(new File(systemPreferences.getProperty("weasis.pref.dir"), "weasis.properties"), systemPreferences, null);
+        // sle 2023年9月8日14:56:47 启动异常的地方
+//    FileUtil.storeProperties(new File(systemPreferences.getProperty("weasis.pref.dir"), "weasis.properties"), systemPreferences, null);
+      FileUtil.storeProperties(propsFile, systemPreferences, null);
       String remotePrefURL = getPrefServiceUrl();
       if (remotePrefURL != null) {
         try {
