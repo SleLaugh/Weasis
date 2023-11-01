@@ -18,7 +18,8 @@ import static java.time.temporal.ChronoField.YEAR;
 
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
+import java.nio.ByteBuffer;
+import java.nio.charset.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -34,6 +35,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javax.xml.stream.XMLInputFactory;
@@ -291,32 +293,49 @@ public class TagD extends TagW {
       value = readValue(s);
     }
 
-    /**
-     * 新增逻辑，获取值时进行gbk 转码，处理中文乱码的情况 sle
-     * 2023年7月5日16:03:35
-     */
     if(value != null) {
-      try {
-        if (value instanceof String) {
-          return new String(value.toString().getBytes("ISO-8859-1"), "gbk");
-        }
-        else if (value instanceof Object[]){
-          Object[] values = (Object[]) value;
-          for (int i = 0; i < values.length; i++) {
-            if (values[i] instanceof String) {
-              values[i] = new String(values[i].toString().getBytes("ISO-8859-1"), "gbk");
-            }
+      if (value instanceof String) {
+        return GetGBKStr(value.toString());
+      }
+      else if (value instanceof Object[]){
+        Object[] values = (Object[]) value;
+        for (int i = 0; i < values.length; i++) {
+          if (values[i] instanceof String) {
+            values[i] = GetGBKStr(values[i].toString());
           }
-          return values;
         }
-        else{
-          return value;
-        }
-      } catch (UnsupportedEncodingException e) {
+        return values;
+      }
+      else{
         return value;
       }
     }
     return value;
+  }
+
+  /**
+   * 判断文字是中文还是英文还是ISO-8859-1
+   * sle 2023年10月13日17:29:27
+   * @param str
+   * @return
+   */
+  private String GetGBKStr(String str) {
+    // 检查字符串是否包含中文字符
+    if (str.matches("[\\u4e00-\\u9fa5]+")) {
+      return str;
+    }
+    // 检查字符串是否只包含英文字符
+    else if (str.matches("[a-zA-Z]+")) {
+      return str;
+    }
+    // 如果字符串既不是中文也不是英文，则尝试将其从ISO-8859-1转换为gbk
+    else {
+      try {
+        return new String(str.getBytes("ISO-8859-1"), "gbk");
+      } catch (UnsupportedEncodingException e) {
+        return str;
+      }
+    }
   }
 
   private Object readValue(Attributes dataset) {

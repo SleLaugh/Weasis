@@ -10,9 +10,17 @@
 package org.weasis.dicom.codec.utils;
 
 import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.nio.charset.CodingErrorAction;
 import java.time.LocalDate;
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.stream.XMLStreamReader;
+
 import org.dcm4che3.data.Attributes;
 import org.dcm4che3.data.Tag;
 import org.weasis.core.api.gui.util.GuiUtils;
@@ -25,129 +33,150 @@ import org.weasis.dicom.util.DateUtil;
 
 public class PatientComparator {
 
-  private String issuerOfPatientID;
-  private String patientId;
-  private String name;
-  private String birthdate;
-  private String sex;
+    private String issuerOfPatientID;
+    private String patientId;
+    private String name;
+    private String birthdate;
+    private String sex;
 
-  public PatientComparator(Attributes item) {
-    setPatientId(item.getString(Tag.PatientID));
-    setIssuerOfPatientID(item.getString(Tag.IssuerOfPatientID));
+    public PatientComparator(Attributes item) {
+        setPatientId(item.getString(Tag.PatientID));
+        setIssuerOfPatientID(item.getString(Tag.IssuerOfPatientID));
+        /**
+         * 新增逻辑，获取值时进行gbk转码，处理中文乱码的情况 sle
+         * 2023年7月5日16:37:28
+         */
+        setName(GetGBKStr(item.getString(Tag.PatientName)));
+        setSex(item.getString(Tag.PatientSex));
+        setBirthdate(item.getString(Tag.PatientBirthDate));
+    }
+
     /**
-     * 新增逻辑，获取值时进行gbk转码，处理中文乱码的情况 sle
-     * 2023年7月5日16:37:28
+     * 判断文字是中文还是英文还是ISO-8859-1
+     * sle 2023年10月13日17:29:27
+     * @param str
+     * @return
      */
-    try {
-      setName(new String(item.getString(Tag.PatientName).getBytes("ISO-8859-1"), "gbk"));
-    } catch (UnsupportedEncodingException e) {
-      setName(item.getString(Tag.PatientName));
-    }
-    setSex(item.getString(Tag.PatientSex));
-    setBirthdate(item.getString(Tag.PatientBirthDate));
-  }
-
-  public PatientComparator(XMLStreamReader xmler) {
-    setPatientId(TagUtil.getTagAttribute(xmler, TagD.get(Tag.PatientID).getKeyword(), null));
-    setIssuerOfPatientID(
-        TagUtil.getTagAttribute(xmler, TagD.get(Tag.IssuerOfPatientID).getKeyword(), null));
-    setName(TagUtil.getTagAttribute(xmler, TagD.get(Tag.PatientName).getKeyword(), null));
-    setSex(TagUtil.getTagAttribute(xmler, TagD.get(Tag.PatientSex).getKeyword(), null));
-    setBirthdate(TagUtil.getTagAttribute(xmler, TagD.get(Tag.PatientBirthDate).getKeyword(), null));
-  }
-
-  public PatientComparator(TagReadable taggable) {
-    setPatientId(TagD.getTagValue(taggable, Tag.PatientID, String.class));
-    setIssuerOfPatientID(TagD.getTagValue(taggable, Tag.IssuerOfPatientID, String.class));
-    setName(TagD.getTagValue(taggable, Tag.PatientName, String.class));
-    setSex(TagD.getTagValue(taggable, Tag.PatientSex, String.class));
-    setBirthdate(
-        DateUtil.formatDicomDate(
-            TagD.getTagValue(taggable, Tag.PatientBirthDate, LocalDate.class)));
-  }
-
-  public String buildPatientPseudoUID() {
-
-    String property =
-        GuiUtils.getUICore()
-            .getSystemPreferences()
-            .getProperty("patientComparator.buildPatientPseudoUID", null);
-
-    if (StringUtil.hasText(property)) {
-
-      StringBuilder buffer = new StringBuilder();
-      String[] split = property.split(",");
-      for (String string : split) {
-        switch (string) {
-          case "issuerOfPatientID" -> buffer.append(issuerOfPatientID);
-          case "patientId" -> buffer.append(patientId);
-          case "patientName" -> buffer.append(name);
-          case "patientBirthdate" -> buffer.append(birthdate);
-          case "patientSex" -> buffer.append(sex);
-        }
+    private String GetGBKStr(String str) {
+      // 检查字符串是否包含中文字符
+      if (str.matches("[\\u4e00-\\u9fa5]+")) {
+          return str;
       }
-      return buffer.toString();
-
-    } else {
-      /*
-       * IHE RAD TF-­‐2: 4.16.4.2.2.5.3
-       *
-       * The Image Display shall not display FrameSets for multiple patients simultaneously. Only images with
-       * exactly the same value for Patient’s ID (0010,0020) and Patient’s Name (0010,0010) shall be displayed at
-       * the same time (other Patient-level attributes may be different, empty or absent). Though it is possible
-       * that the same patient may have slightly different identifying attributes in different DICOM images
-       * performed at different sites or on different occasions, it is expected that such differences will have
-       * been reconciled prior to the images being provided to the Image Display (e.g., in the Image
-       * Manager/Archive or by the Portable Media Creator).
-       */
-      // Build a global identifier for the patient.
-      StringBuilder buffer = new StringBuilder(patientId);
-      // patientID + issuerOfPatientID => should be unique globally
-      buffer.append(issuerOfPatientID);
-      buffer.append(name);
-
-      return buffer.toString();
+      // 检查字符串是否只包含英文字符
+      else if (str.matches("[a-zA-Z]+")) {
+          return str;
+      }
+      // 如果字符串既不是中文也不是英文，则尝试将其从ISO-8859-1转换为gbk
+      else {
+         try {
+             return new String(str.getBytes("ISO-8859-1"), "gbk");
+         } catch (UnsupportedEncodingException e) {
+             return str;
+         }
+      }
     }
-  }
 
-  public String getIssuerOfPatientID() {
-    return issuerOfPatientID;
-  }
+    public PatientComparator(XMLStreamReader xmler) {
+        setPatientId(TagUtil.getTagAttribute(xmler, TagD.get(Tag.PatientID).getKeyword(), null));
+        setIssuerOfPatientID(
+                TagUtil.getTagAttribute(xmler, TagD.get(Tag.IssuerOfPatientID).getKeyword(), null));
+        setName(TagUtil.getTagAttribute(xmler, TagD.get(Tag.PatientName).getKeyword(), null));
+        setSex(TagUtil.getTagAttribute(xmler, TagD.get(Tag.PatientSex).getKeyword(), null));
+        setBirthdate(TagUtil.getTagAttribute(xmler, TagD.get(Tag.PatientBirthDate).getKeyword(), null));
+    }
 
-  public void setIssuerOfPatientID(String issuerOfPatientID) {
-    this.issuerOfPatientID =
-        Optional.ofNullable(issuerOfPatientID).orElse(StringUtil.EMPTY_STRING).trim();
-  }
+    public PatientComparator(TagReadable taggable) {
+        setPatientId(TagD.getTagValue(taggable, Tag.PatientID, String.class));
+        setIssuerOfPatientID(TagD.getTagValue(taggable, Tag.IssuerOfPatientID, String.class));
+        setName(TagD.getTagValue(taggable, Tag.PatientName, String.class));
+        setSex(TagD.getTagValue(taggable, Tag.PatientSex, String.class));
+        setBirthdate(
+                DateUtil.formatDicomDate(
+                        TagD.getTagValue(taggable, Tag.PatientBirthDate, LocalDate.class)));
+    }
 
-  public String getPatientId() {
-    return patientId;
-  }
+    public String buildPatientPseudoUID() {
 
-  public void setPatientId(String patientId) {
-    this.patientId = Optional.ofNullable(patientId).orElse(TagW.NO_VALUE).trim();
-  }
+        String property =
+                GuiUtils.getUICore()
+                        .getSystemPreferences()
+                        .getProperty("patientComparator.buildPatientPseudoUID", null);
 
-  public String getName() {
-    return name;
-  }
+        if (StringUtil.hasText(property)) {
 
-  public void setName(String name) {
-    this.name = Optional.ofNullable(name).orElse(TagW.NO_VALUE).toUpperCase().trim();
-  }
+            StringBuilder buffer = new StringBuilder();
+            String[] split = property.split(",");
+            for (String string : split) {
+                switch (string) {
+                    case "issuerOfPatientID" -> buffer.append(issuerOfPatientID);
+                    case "patientId" -> buffer.append(patientId);
+                    case "patientName" -> buffer.append(name);
+                    case "patientBirthdate" -> buffer.append(birthdate);
+                    case "patientSex" -> buffer.append(sex);
+                }
+            }
+            return buffer.toString();
 
-  public String getBirthdate() {
-    return birthdate;
-  }
+        } else {
+            /*
+             * IHE RAD TF-­‐2: 4.16.4.2.2.5.3
+             *
+             * The Image Display shall not display FrameSets for multiple patients simultaneously. Only images with
+             * exactly the same value for Patient’s ID (0010,0020) and Patient’s Name (0010,0010) shall be displayed at
+             * the same time (other Patient-level attributes may be different, empty or absent). Though it is possible
+             * that the same patient may have slightly different identifying attributes in different DICOM images
+             * performed at different sites or on different occasions, it is expected that such differences will have
+             * been reconciled prior to the images being provided to the Image Display (e.g., in the Image
+             * Manager/Archive or by the Portable Media Creator).
+             */
+            // Build a global identifier for the patient.
+            StringBuilder buffer = new StringBuilder(patientId);
+            // patientID + issuerOfPatientID => should be unique globally
+            buffer.append(issuerOfPatientID);
+            buffer.append(name);
 
-  public void setBirthdate(String birthdate) {
-    this.birthdate = Optional.ofNullable(birthdate).orElse(StringUtil.EMPTY_STRING).trim();
-  }
+            return buffer.toString();
+        }
+    }
 
-  public String getSex() {
-    return sex;
-  }
+    public String getIssuerOfPatientID() {
+        return issuerOfPatientID;
+    }
 
-  public void setSex(String sex) {
-    this.sex = Optional.ofNullable(sex).orElse(StringUtil.EMPTY_STRING).trim();
-  }
+    public void setIssuerOfPatientID(String issuerOfPatientID) {
+        this.issuerOfPatientID =
+                Optional.ofNullable(issuerOfPatientID).orElse(StringUtil.EMPTY_STRING).trim();
+    }
+
+    public String getPatientId() {
+        return patientId;
+    }
+
+    public void setPatientId(String patientId) {
+        this.patientId = Optional.ofNullable(patientId).orElse(TagW.NO_VALUE).trim();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = Optional.ofNullable(name).orElse(TagW.NO_VALUE).toUpperCase().trim();
+    }
+
+    public String getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(String birthdate) {
+        this.birthdate = Optional.ofNullable(birthdate).orElse(StringUtil.EMPTY_STRING).trim();
+    }
+
+    public String getSex() {
+        return sex;
+    }
+
+    public void setSex(String sex) {
+        this.sex = Optional.ofNullable(sex).orElse(StringUtil.EMPTY_STRING).trim();
+    }
 }
